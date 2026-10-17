@@ -24,7 +24,16 @@ document.querySelector('#interest-form').addEventListener('submit', event => {
 });
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-document.querySelectorAll('.offering-select').forEach(button => button.addEventListener('click', () => {
-  document.querySelectorAll('.offering-select').forEach(tab => { tab.setAttribute('aria-pressed', String(tab === button)); tab.closest('.offering').classList.toggle('active', tab === button); });
-  document.querySelector('.immersive-hero').dataset.focus = button.dataset.pillar;
+const programmeLinks = document.querySelectorAll('a[href="#movement"], a[href="#nutrition"], a[href="#workshops"], a[href="#retreats"]');
+function highlightProgramme(id) {
+  document.querySelectorAll('.card').forEach(card => card.classList.toggle('selected-programme', card.id === id));
+  document.querySelectorAll('.offering-select').forEach(link => link.closest('.offering').classList.toggle('active', link.dataset.pillar === id));
+  document.querySelector('.immersive-hero').dataset.focus = id;
+}
+programmeLinks.forEach(link => link.addEventListener('click', () => {
+  const id = link.hash.slice(1);
+  highlightProgramme(id);
+  document.getElementById(id)?.focus({ preventScroll: true });
 }));
+window.addEventListener('hashchange', () => highlightProgramme(location.hash.slice(1)));
+if (location.hash) highlightProgramme(location.hash.slice(1));

@@ -1,1 +1,19 @@
-{"name":"boan","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"vite build","preview":"vite preview --host 0.0.0.0"},"devDependencies":{"vite":"8.3.4"},"dependencies":{"@fontsource/dm-sans":"^5.3.0","@fontsource/playfair-display":"^5.3.0"}}
+{
+  "name": "boan",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "preview:standalone": "npm run build && node scripts/build-preview.mjs"
+  },
+  "devDependencies": {
+    "vite": "8.3.4"
+  },
+  "dependencies": {
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0"
+  }
+}
