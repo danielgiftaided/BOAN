@@ -1,6 +1,6 @@
 # BOAN — Builders Of A Nation
 
-A responsive homepage for a women-only community interest company, covering Movement with SNB Hive, Nutrition, Workshops and Retreats.
+A women-only community homepage covering Movement with SNB Hive, Nutrition, Workshops and Retreats.
 
 ## Development
 
@@ -11,31 +11,30 @@ npm ci --cache /tmp/boan-npm-cache
 npm run dev -- --port 3000
 ```
 
-## Production
+## Build and preview
 
 ```sh
 npm run build
 npm run preview -- --port 3000
-```
-
-The production output is in `dist/`. Fonts and the hero image are served locally. The hero is AI-generated concept imagery, not a photograph of BOAN members. The stacked BOAN mark is a vector recreation of the design supplied in chat, with cream/pink and lime/pink variants. It is an approximation of the source image rather than a pixel-exact recolour; replace the SVG with the original vector artwork if supplied.
-
-## Current scope
-
-Homepage navigation, responsive menu, FAQs, and an accessible native enquiry dialog are implemented. The form downloads a personal note of interest and does not submit or retain information online. Before public launch, add confirmed programme details and contact information, integrate a real enquiry or booking destination, and review organisation/privacy information. No session dates, prices, testimonials or contact addresses have been invented.
-
-The supplied SKY TING screenshot informs the full-bleed hero, overlay navigation, and service-panel layout. Direct access to both skyting.com and www.skyting.com was blocked by the environment network policy.
-
-## Interactive mockup — no server needed
-
-Download [the interactive preview](docs/boan-interactive-preview.html) using GitHub's **Download raw file** button, then open the saved `.html` file in a desktop browser. GitHub's file viewer shows source code; it does not run the preview. The HTML contains the actual built homepage, including its fonts, images, logo and JavaScript. Its navigation, menus, FAQs, and interest-note download work without an internet connection. There is no backend submission or confirmed booking.
-
-Regenerate the file after homepage changes:
-
-```sh
 npm run preview:standalone
 ```
 
-The cloud browser's policy blocks `file://` navigation, so validation loaded the exact standalone HTML through an intercepted document request with networking disabled. All assets were inline; all four programme links, focus management, the mobile menu, FAQs and the interest-note download passed. Widths 320, 390, 768, 1024 and 1440px showed no horizontal overflow.
+The production output is in `dist/`. The standalone command packages the actual production homepage, its fonts, original logo and JavaScript into `docs/boan-interactive-preview.html`. Download the raw HTML from GitHub and open it in a browser. The menu, section links, FAQs and enquiry interactions work locally. The standalone version has a `noindex,nofollow` robots directive.
 
-Retreats are presented as a programme being explored; dates, locations and bookings are not yet available. The preview must be connected to an approved hosting service for a publicly navigable URL. No public deployment has been made.
+The `gh-pages` branch contains a separate static design preview. GitHub rejected automatic Pages activation because the integration lacks the required Pages permission. It does not merge website code into `main`. Refreshing it requires rebuilding and publishing the standalone HTML as `index.html`; source commits alone do not update those preview files.
+
+To enable a hosted preview, a repository administrator can open **Settings → Pages**, choose **Deploy from a branch**, select **gh-pages** and **/ (root)**, and save. Use the URL GitHub displays after its Pages build finishes. Hosting has not been enabled by this task.
+
+## Brand and content
+
+The photo-free homepage uses the supplied BOAN presentation as visual and mission reference. Its main palette is pink `#FF66C4`, green `#77D200` and navy `#010A4F`, with pale tints for reading areas. The original transparent BOAN logo was extracted directly from the presentation and is displayed in navy/pink through CSS masking. No logo redrawing or AI-generated artwork is used in the current homepage.
+
+The opening focuses on women's confidence, belonging and opportunity. Movement, Nutrition, Workshops and Retreats have distinct navigation targets. Information about reducing financial and practical barriers, community-led programmes and partnerships reflects the supplied presentation. Retreat dates, prices and bookings have not been invented.
+
+## Current limits
+
+The enquiry form downloads a personal note of interest; it does not send or retain details online. Confirmed programmes, contact details, booking/enquiry integration and organisation/privacy information remain pre-launch work. Free or subsidised access is described as dependent on partnerships and funding.
+
+## Validation
+
+Production build and Chromium interaction checks passed: all four programme links with focus/current state, mobile menu including Escape, FAQs, retreat and partnership interest selection, and local downloads. Widths 320, 360, 390, 560, 768, 820, 900, 1024 and 1440px showed no horizontal overflow. The exact standalone document was also tested with networking disabled and required no external asset requests.

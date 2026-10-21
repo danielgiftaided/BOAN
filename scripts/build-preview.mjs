@@ -26,6 +26,7 @@ html = html.replace(moduleScript[0], () => `<script type="module">${js.replace(/
 for (const [match, asset] of [...html.matchAll(/src="(\/[^\"]+)"/g)]) {
   html = html.replace(match, `src="${await dataUrl(asset)}"`);
 }
+html = html.replace('</head>', '<meta name="robots" content="noindex,nofollow"/></head>');
 await mkdir(resolve(root, 'docs'), { recursive: true });
 await writeFile(resolve(root, 'docs/boan-interactive-preview.html'), html);
 console.log('Created docs/boan-interactive-preview.html — open it in a browser.');
