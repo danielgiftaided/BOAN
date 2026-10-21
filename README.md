@@ -19,9 +19,11 @@ npm run preview -- --port 3000
 npm run preview:standalone
 ```
 
-The production output is in `dist/`. The standalone command packages the actual production homepage, its fonts, original logo and JavaScript into `docs/boan-interactive-preview.html`. Download the raw HTML from GitHub and open it in a browser, or use the hosted design preview linked in the PR. The standalone version has a `noindex,nofollow` robots directive.
+The production output is in `dist/`. The standalone command packages the actual production homepage, its fonts, original logo and JavaScript into `docs/boan-interactive-preview.html`. Download the raw HTML from GitHub and open it in a browser. The menu, section links, FAQs and enquiry interactions work locally. The standalone version has a `noindex,nofollow` robots directive.
 
-The `gh-pages` branch is a separate, static design-preview deployment. It does not merge website code into `main`. Refreshing it requires rebuilding and publishing the standalone HTML as `index.html`; source commits alone do not update that deployment.
+The `gh-pages` branch contains a separate static design preview. GitHub rejected automatic Pages activation because the integration lacks the required Pages permission. It does not merge website code into `main`. Refreshing it requires rebuilding and publishing the standalone HTML as `index.html`; source commits alone do not update those preview files.
+
+To enable a hosted preview, a repository administrator can open **Settings → Pages**, choose **Deploy from a branch**, select **gh-pages** and **/ (root)**, and save. Use the URL GitHub displays after its Pages build finishes. Hosting has not been enabled by this task.
 
 ## Brand and content
 
