@@ -85,7 +85,7 @@ if (giving) {
   function money(pence) {
     return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: pence % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(pence / 100);
   }
-  function summary(pence) { return `${money(pence)} ${frequency === 'monthly' ? 'every month' : 'once'}`; }
+  function summary(pence) { return frequency === 'monthly' ? `${money(pence)} every month` : money(pence); }
   function impact(pence) {
     return frequency === 'monthly'
       ? getMonthlyImpact(pence).description

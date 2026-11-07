@@ -52,10 +52,10 @@ test('monthly £35 default, review disclosure and single-gift change stay consis
   await expect(page.getByRole('dialog')).toContainText('No payment has been taken');
   await page.keyboard.press('Escape');
   await page.getByLabel('Single donation', { exact: true }).check();
-  await expect(page.locator('#gift-summary')).toHaveText('£25 once');
+  await expect(page.locator('#gift-summary')).toHaveText('£25');
   await page.getByLabel('£100', { exact: true }).check();
   await page.getByRole('button', { name: 'Review my support' }).click();
-  await expect(page.locator('#review-amount')).toHaveText('£100 once');
+  await expect(page.locator('#review-amount')).toHaveText('£100');
   await expect(page.locator('#review-impact')).not.toContainText('fitness classes for a month');
   await page.getByRole('button', { name: 'Change my choice' }).click();
   await page.getByLabel('Monthly donation', { exact: true }).check();
@@ -156,6 +156,10 @@ test('downloadable single-file mockup navigates all pages and donation choices o
   await expect(site.locator('#monthly-impact-description')).toHaveText('Support 10 women to attend one class of their choice each month.');
   await site.getByLabel('Single donation', { exact: true }).check();
   await expect(site.locator('#monthly-impact')).not.toBeVisible();
+  await expect(site.locator('#gift-summary')).toHaveText('£25');
+  await site.getByLabel('Monthly donation', { exact: true }).check();
+  await site.getByLabel('£20', { exact: true }).check();
+  await expect(site.locator('#monthly-impact-description')).toHaveText('Support one woman to attend two sessions each month.');
   expect(assetRequests).toEqual([]);
 });
 
@@ -178,6 +182,7 @@ test('monthly amounts update the left-hand impact and review with the correct se
   await expect(page.getByLabel('£50', { exact: true })).toHaveCount(0);
   const scenarios = [
     [10, 'Support one woman to attend one pay-as-you-go session each month.'],
+    [20, 'Support one woman to attend two sessions each month.'],
     [60, 'Support one woman to attend four reformer Pilates sessions each month — one session a week.'],
     [100, 'Support 10 women to attend one class of their choice each month.'],
     [35, 'Support one woman to attend fitness classes for a month.'],
@@ -223,5 +228,5 @@ test('single gifts hide monthly impact; custom monthly amounts never retain stal
   await page.getByLabel('£20', { exact: true }).check();
   await expect(panel).toBeVisible();
   await expect(page.locator('#monthly-impact-amount')).toHaveText('£20 a month.');
-  await expect(panel).toContainText('Help widen access');
+  await expect(page.locator('#monthly-impact-description')).toHaveText('Support one woman to attend two sessions each month.');
 });

@@ -9,6 +9,10 @@ const monthlyImpacts = {
     title: 'One session. One woman.',
     description: 'Support one woman to attend one pay-as-you-go session each month.',
   },
+  2000: {
+    title: 'Two sessions. One woman.',
+    description: 'Support one woman to attend two sessions each month.',
+  },
   3500: {
     title: 'A month of possibility.',
     description: 'Support one woman to attend fitness classes for a month.',
