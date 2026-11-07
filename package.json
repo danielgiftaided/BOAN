@@ -7,9 +7,14 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "preview:standalone": "npm run build && node scripts/build-preview.mjs"
+    "preview:standalone": "npm run build && node scripts/build-preview.mjs",
+    "pages": "node scripts/build-pages.mjs",
+    "predev": "npm run pages",
+    "prebuild": "npm run pages",
+    "test:e2e": "npm run build && playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "vite": "8.3.4"
   },
   "dependencies": {

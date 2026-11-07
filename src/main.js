@@ -4,19 +4,6 @@ import '@fontsource/dm-sans/600.css';
 import '@fontsource/dm-sans/700.css';
 import '@fontsource/playfair-display/500-italic.css';
 
-const dialog = document.querySelector('#join-dialog');
-const interest = document.querySelector('select');
-document.querySelectorAll('[data-join], [data-interest]').forEach(button => button.addEventListener('click', () => {
-  interest.value = button.dataset.interest || 'A little bit of everything';
-  document.querySelector('#form-result').textContent = '';
-  dialog.showModal();
-}));
-document.querySelector('.close').addEventListener('click', () => dialog.close());
-dialog.addEventListener('click', event => {
-  const { left, right, top, bottom } = dialog.getBoundingClientRect();
-  if (event.target === dialog && (event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom)) dialog.close();
-});
-
 const menu = document.querySelector('.menu-toggle');
 const nav = document.querySelector('#main-nav');
 function closeMenu() {
@@ -37,33 +24,126 @@ document.addEventListener('keydown', event => {
     menu.focus();
   }
 });
-matchMedia('(min-width: 821px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
+matchMedia('(min-width: 1001px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
 
-function highlightProgramme(id) {
-  document.querySelectorAll('.programme-card').forEach(card => card.classList.toggle('selected-programme', card.id === id));
-  nav.querySelectorAll('a').forEach(link => {
-    if (link.hash === `#${id}`) link.setAttribute('aria-current', 'location');
+document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', () => {
+  const target = document.getElementById(link.hash.slice(1));
+  target?.focus({ preventScroll: true });
+}));
+function updateProgramLocation() {
+  document.querySelectorAll('.program-jumps a').forEach(link => {
+    if (link.hash === (window.BOAN_PREVIEW_HASH ?? location.hash)) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   });
 }
-document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', () => {
-  const id = link.hash.slice(1);
-  highlightProgramme(id);
-  if (id) document.getElementById(id)?.focus({ preventScroll: true });
-}));
-window.addEventListener('hashchange', () => highlightProgramme(location.hash.slice(1)));
-if (location.hash) highlightProgramme(location.hash.slice(1));
-
-document.querySelector('#interest-form').addEventListener('submit', event => {
-  event.preventDefault();
-  const data = new FormData(event.target);
-  const blob = new Blob([`BOAN — Builders Of A Nation\n\nName: ${data.get('name')}\nInterest: ${data.get('interest')}\n\nThis is a personal note of interest, not a confirmed registration.\n`], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'my-boan-interest.txt';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  document.querySelector('#form-result').textContent = 'Your interest note is ready to download. Nothing has been sent online.';
-});
+window.addEventListener('hashchange', updateProgramLocation);
+updateProgramLocation();
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+function downloadText(filename, text) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+const contact = document.querySelector('#contact-form');
+if (contact) {
+  const params = new URLSearchParams(window.BOAN_PREVIEW_SEARCH ?? location.search);
+  const topic = contact.elements.topic;
+  if ([...topic.options].some(option => option.value === params.get('topic'))) topic.value = params.get('topic');
+  if (params.has('message')) contact.elements.message.value = params.get('message').slice(0, 5000);
+  contact.addEventListener('submit', event => {
+    event.preventDefault();
+    const data = new FormData(contact);
+    downloadText('my-boan-enquiry.txt', `BOAN — enquiry draft\n\nName: ${data.get('name')}\nEmail: ${data.get('email')}\nTopic: ${topic.selectedOptions[0].textContent}\n\n${data.get('message')}\n\nThis is a saved enquiry draft. It has not been sent to BOAN.\n`);
+    document.querySelector('#contact-result').textContent = 'Your enquiry draft is ready to download. It has not been sent to BOAN.';
+  });
+}
+
+const giving = document.querySelector('#donation-form');
+if (giving) {
+  const presets = { single: [10, 25, 50, 100], monthly: [10, 20, 35, 50] };
+  const choices = { single: { amount: 2500, custom: false, raw: '' }, monthly: { amount: 3500, custom: false, raw: '' } };
+  let frequency = 'monthly';
+  const presetGroup = document.querySelector('#preset-amounts');
+  const custom = document.querySelector('#custom-amount');
+  const error = document.querySelector('#donation-error');
+  const review = document.querySelector('#donation-review');
+  function parseAmount(raw) {
+    if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) return null;
+    const pence = Math.round(Number(raw) * 100);
+    return Number.isSafeInteger(pence) && pence >= 100 ? pence : null;
+  }
+  function amount() {
+    const choice = choices[frequency];
+    return choice.custom ? parseAmount(choice.raw) : choice.amount;
+  }
+  function money(pence) {
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: pence % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(pence / 100);
+  }
+  function summary(pence) { return `${money(pence)} ${frequency === 'monthly' ? 'every month' : 'once'}`; }
+  function impact(pence) {
+    return frequency === 'monthly' && pence === 3500
+      ? 'Support a woman to attend fitness classes for a month.'
+      : `Help widen access to BOAN’s community activities with your ${frequency === 'monthly' ? 'monthly' : 'single'} gift.`;
+  }
+  function clearError() {
+    error.textContent = '';
+    custom.removeAttribute('aria-invalid');
+  }
+  function updateSummary() {
+    const value = amount();
+    document.querySelector('#gift-summary').textContent = value === null ? 'Choose your amount' : summary(value);
+    document.querySelector('#gift-impact').textContent = value === null ? 'Enter an amount of at least £1, with up to two decimal places.' : impact(value);
+  }
+  function renderAmounts() {
+    const choice = choices[frequency];
+    presetGroup.innerHTML = presets[frequency].map(value => `<label><input type="radio" name="amount" value="${value}"${!choice.custom && choice.amount === value * 100 ? ' checked' : ''}/><span>£${value}</span></label>`).join('');
+    custom.value = choice.custom ? choice.raw : '';
+    document.querySelector('#amount-period').textContent = frequency === 'monthly' ? 'per month' : 'for your single gift';
+    clearError();
+    updateSummary();
+  }
+  giving.querySelectorAll('[name="frequency"]').forEach(radio => radio.addEventListener('change', () => {
+    frequency = radio.value;
+    renderAmounts();
+  }));
+  presetGroup.addEventListener('change', event => {
+    if (event.target.name !== 'amount') return;
+    choices[frequency] = { amount: Number(event.target.value) * 100, custom: false, raw: '' };
+    custom.value = '';
+    clearError();
+    updateSummary();
+  });
+  custom.addEventListener('input', () => {
+    choices[frequency].custom = true;
+    choices[frequency].raw = custom.value.trim();
+    presetGroup.querySelectorAll('input').forEach(radio => { radio.checked = false; });
+    clearError();
+    updateSummary();
+  });
+  giving.addEventListener('submit', event => {
+    event.preventDefault();
+    const value = amount();
+    if (value === null) {
+      error.textContent = 'Enter an amount of at least £1, with up to two decimal places.';
+      custom.setAttribute('aria-invalid', 'true');
+      custom.focus();
+      return;
+    }
+    document.querySelector('#review-amount').textContent = summary(value);
+    document.querySelector('#review-impact').textContent = impact(value);
+    const params = new URLSearchParams({ topic: 'support', message: `I’m interested in supporting BOAN with a ${frequency === 'monthly' ? 'monthly' : 'single'} gift of ${money(value)}.` });
+    document.querySelector('#giving-contact').href = `contact-us.html?${params}`;
+    review.showModal();
+  });
+  review.querySelectorAll('[data-close-review]').forEach(button => button.addEventListener('click', () => review.close()));
+  review.addEventListener('click', event => {
+    const { left, right, top, bottom } = review.getBoundingClientRect();
+    if (event.target === review && (event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom)) review.close();
+  });
+  renderAmounts();
+}
