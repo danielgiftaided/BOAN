@@ -1,3 +1,4 @@
+import { donationPresets, getMonthlyImpact } from './content/donation-options.js';
 import '@fontsource/dm-sans/400.css';
 import '@fontsource/dm-sans/500.css';
 import '@fontsource/dm-sans/600.css';
@@ -65,13 +66,13 @@ if (contact) {
 
 const giving = document.querySelector('#donation-form');
 if (giving) {
-  const presets = { single: [10, 25, 50, 100], monthly: [10, 20, 35, 50] };
   const choices = { single: { amount: 2500, custom: false, raw: '' }, monthly: { amount: 3500, custom: false, raw: '' } };
   let frequency = 'monthly';
   const presetGroup = document.querySelector('#preset-amounts');
   const custom = document.querySelector('#custom-amount');
   const error = document.querySelector('#donation-error');
   const review = document.querySelector('#donation-review');
+  const monthlyPanel = document.querySelector('#monthly-impact');
   function parseAmount(raw) {
     if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) return null;
     const pence = Math.round(Number(raw) * 100);
@@ -86,9 +87,9 @@ if (giving) {
   }
   function summary(pence) { return `${money(pence)} ${frequency === 'monthly' ? 'every month' : 'once'}`; }
   function impact(pence) {
-    return frequency === 'monthly' && pence === 3500
-      ? 'Support a woman to attend fitness classes for a month.'
-      : `Help widen access to BOAN’s community activities with your ${frequency === 'monthly' ? 'monthly' : 'single'} gift.`;
+    return frequency === 'monthly'
+      ? getMonthlyImpact(pence).description
+      : 'Help widen access to BOAN’s community activities with your single gift.';
   }
   function clearError() {
     error.textContent = '';
@@ -98,10 +99,18 @@ if (giving) {
     const value = amount();
     document.querySelector('#gift-summary').textContent = value === null ? 'Choose your amount' : summary(value);
     document.querySelector('#gift-impact').textContent = value === null ? 'Enter an amount of at least £1, with up to two decimal places.' : impact(value);
+    monthlyPanel.hidden = frequency !== 'monthly' || value === null;
+    if (!monthlyPanel.hidden) {
+      const selectedImpact = getMonthlyImpact(value);
+      document.querySelector('#monthly-impact-amount').textContent = `${money(value)} a month.`;
+      document.querySelector('#monthly-impact-title').textContent = selectedImpact.title;
+      document.querySelector('#monthly-impact-description').textContent = selectedImpact.description;
+    }
   }
   function renderAmounts() {
     const choice = choices[frequency];
-    presetGroup.innerHTML = presets[frequency].map(value => `<label><input type="radio" name="amount" value="${value}"${!choice.custom && choice.amount === value * 100 ? ' checked' : ''}/><span>£${value}</span></label>`).join('');
+    presetGroup.dataset.frequency = frequency;
+    presetGroup.innerHTML = donationPresets[frequency].map(value => `<label><input type="radio" name="amount" value="${value}"${!choice.custom && choice.amount === value * 100 ? ' checked' : ''}/><span>£${value}</span></label>`).join('');
     custom.value = choice.custom ? choice.raw : '';
     document.querySelector('#amount-period').textContent = frequency === 'monthly' ? 'per month' : 'for your single gift';
     clearError();
