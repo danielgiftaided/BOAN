@@ -1,6 +1,6 @@
 # BOAN — Builders Of A Nation
 
-A women-only community homepage covering Movement with SNB Hive, Nutrition, Workshops and Retreats.
+A women-only community website using BOAN’s original logo and presentation palette: pink `#FF66C4`, green `#77D200` and navy `#010A4F`.
 
 ## Development
 
@@ -11,7 +11,20 @@ npm ci --cache /tmp/boan-npm-cache
 npm run dev -- --port 3000
 ```
 
-## Build and preview
+## Pages and editing
+
+The website has six genuine HTML pages, not homepage tabs:
+
+- `index.html` — mission, programmes, ways to get involved and the impact of support.
+- `about-us.html` — purpose, values and community-led approach.
+- `our-programs.html` — Movement with SNB Hive, Nutrition, Workshops and Retreats.
+- `get-involved.html` — participation, volunteering, partnerships and financial support.
+- `contact-us.html` — enquiry preview with relevant topics and a local draft download.
+- `support-our-work.html` — single/monthly donation choices and the £35 monthly fitness support message.
+
+Edit shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, styling in `src/style.css`, and interactions in `src/main.js`. `npm run pages` generates the six root HTML files. Generation also runs automatically before development and production builds. Keep the generated HTML committed so the page structure and navigation can be reviewed without running JavaScript.
+
+## Build and interactive previews
 
 ```sh
 npm run build
@@ -19,22 +32,32 @@ npm run preview -- --port 3000
 npm run preview:standalone
 ```
 
-The production output is in `dist/`. The standalone command packages the actual production homepage, its fonts, original logo and JavaScript into `docs/boan-interactive-preview.html`. Download the raw HTML from GitHub and open it in a browser. The menu, section links, FAQs and enquiry interactions work locally. The standalone version has a `noindex,nofollow` robots directive.
+The production output is in `dist/`. Relative URLs support deployment at a subpath such as GitHub Pages.
 
-The `gh-pages` branch contains a separate static design preview. GitHub rejected automatic Pages activation because the integration lacks the required Pages permission. It does not merge website code into `main`. Refreshing it requires rebuilding and publishing the standalone HTML as `index.html`; source commits alone do not update those preview files.
+The preview command produces:
 
-To enable a hosted preview, a repository administrator can open **Settings → Pages**, choose **Deploy from a branch**, select **gh-pages** and **/ (root)**, and save. Use the URL GitHub displays after its Pages build finishes. Hosting has not been enabled by this task.
+- `docs/preview/`: six independently navigable HTML files with inline fonts, logo and JavaScript. Open `index.html` and keep the files together.
+- `docs/boan-interactive-preview.html`: a single-file mockup containing the same six pages. Its embedded preview frame preserves page navigation, queries, programme anchors and browser-back navigation without an external server.
 
-## Brand and content
+Both exports include `noindex,nofollow` directives. Their forms are demonstrations. In the single-file export, `BOAN_PREVIEW_SEARCH` and `BOAN_PREVIEW_HASH` supply the current simulated page location to the shared interaction code.
 
-The photo-free homepage uses the supplied BOAN presentation as visual and mission reference. Its main palette is pink `#FF66C4`, green `#77D200` and navy `#010A4F`, with pale tints for reading areas. The original transparent BOAN logo was extracted directly from the presentation and is displayed in navy/pink through CSS masking. No logo redrawing or AI-generated artwork is used in the current homepage.
+The `gh-pages` branch contains a separate static design-preview package. Downloading its GitHub source archive gives a ZIP with `index.html`, the other five pages and `BOAN-interactive-mockup.html`. Open either `index.html` or `BOAN-interactive-mockup.html` after extracting the ZIP. Source branch commits do not automatically update `gh-pages`; publish the refreshed standalone files separately. Hosting status is not established by publishing these files. To enable a hosted preview, a repository administrator can select **Settings → Pages → Deploy from a branch → gh-pages → / (root)** and save.
 
-The opening focuses on women's confidence, belonging and opportunity. Movement, Nutrition, Workshops and Retreats have distinct navigation targets. Information about reducing financial and practical barriers, community-led programmes and partnerships reflects the supplied presentation. Retreat dates, prices and bookings have not been invented.
+## Giving and contact previews
 
-## Current limits
+The donation page defaults to £35 monthly, explaining that this can support a woman to attend fitness classes for a month. It offers suggested amounts for single and monthly giving, custom amounts in pounds/pence, live summaries, validation, and an explicit review dialog. Different monthly/single choices are remembered while switching frequency on that page. Invalid custom amounts cannot reach review.
 
-The enquiry form downloads a personal note of interest; it does not send or retain details online. Confirmed programmes, contact details, booking/enquiry integration and organisation/privacy information remain pre-launch work. Free or subsidised access is described as dependent on partnerships and funding.
+The user confirmed there is no donation platform yet. No payments, subscriptions, card collection or payment-success claims are implemented. A real giving provider and final payment terms remain pre-launch work. No Gift Aid or charitable tax status is assumed for the CIC. The review can pass the selected gift to the contact page as an enquiry draft.
 
-## Validation
+The contact form validates name, email and message, then downloads a local text draft. Nothing is sent or stored online. Before launching enquiries, configure a verified destination and update the form notice and submission behaviour. Programme dates, prices, contact details and bookings have not been invented.
 
-Production build and Chromium interaction checks passed: all four programme links with focus/current state, mobile menu including Escape, FAQs, retreat and partnership interest selection, and local downloads. Widths 320, 360, 390, 560, 768, 820, 900, 1024 and 1440px showed no horizontal overflow. The exact standalone document was also tested with networking disabled and required no external asset requests.
+## Browser checks
+
+```sh
+npm run preview:standalone
+npm run test:e2e
+```
+
+Playwright uses `/usr/bin/chromium` when available. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for another system browser, or install the matching Playwright Chromium browser in your development environment.
+
+The suite checks distinct page navigation and reloads, programme anchors, enquiry topics and draft downloads, monthly/single/custom gift validation and review, mobile menus and giving shortcuts, responsive widths from 320 to 1440px, local link targets, and offline navigation through the single-file mockup without external asset requests.
