@@ -7,6 +7,7 @@ export const arrow = '<svg class="arrow-icon" viewBox="0 0 24 24" fill="none" st
 export const flower = '<svg class="flower" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="17" stroke-linecap="round" aria-hidden="true"><path d="M50 12v76M12 50h76M23 23l54 54M23 77l54-54"/></svg>';
 const brand = '<span class="brand-mark" aria-hidden="true"></span>';
 export const navigation = [
+  ['index.html', 'Home'],
   ['about-us.html', 'About Us'],
   ['our-programs.html', 'Our Programs'],
   ['get-involved.html', 'Get Involved'],
@@ -65,7 +66,7 @@ const support = `<section class="giving-hero section">${breadcrumb('Support Our 
 <dialog id="donation-review" aria-labelledby="review-title"><button class="close" data-close-review aria-label="Close donation review">×</button><h2 id="review-title">A little giving.<br><em>More possibility.</em></h2><p id="review-amount" class="review-amount"></p><p id="review-impact"></p><p class="preview-note">This is a preview of your choice. No payment has been taken and no recurring donation has been set up.</p><div class="review-actions"><button class="button outline" data-close-review type="button">Change my choice</button><a class="button lime" id="giving-contact" href="contact-us.html?topic=support">Ask about giving ${arrow}</a></div></dialog>`;
 
 export const pages = [
-  {file:'index.html', title:'Your space. Your strength. Our future.', description:'A women-only community for movement, wellbeing and meaningful connection. Explore BOAN, get involved or support another woman’s access to fitness.', content:home},
+  {file:'index.html', title:'Feel supported. Grow stronger. Thrive together.', description:'A women-only community for movement, wellbeing and meaningful connection. Explore BOAN, get involved or support another woman’s access to fitness.', content:home},
   {file:'about-us.html', title:'About Us', description:'Meet Builders Of A Nation, a female-only CIC working to widen access to wellbeing, movement and community.', content:about},
   {file:'our-programs.html', title:'Our Programmes', description:'Explore movement, workshops, creative activities and retreats with BOAN.', content:programs},
   {file:'get-involved.html', title:'Get Involved', description:'Volunteer, partner with BOAN or become an ambassador to help women and communities thrive.', content:involved},

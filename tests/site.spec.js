@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { testimonials } from '../src/content/testimonials.js';
-const links = [['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
-const files = ['index.html', ...links.map(([, file]) => file), 'support-our-work.html'];
+const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
+const files = [...links.map(([, file]) => file), 'support-our-work.html'];
 
 test('header links open distinct, reloadable pages with current-page state', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.site-header nav a')).toHaveCount(4);
+  await expect(page.locator('.site-header nav a')).toHaveCount(5);
   for (const [label, file] of links) {
     await page.locator('.site-header nav').getByRole('link', { name: label, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${file}$`));
@@ -18,6 +18,8 @@ test('header links open distinct, reloadable pages with current-page state', asy
   await page.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true }).click();
   await expect(page).toHaveURL(/support-our-work.html$/);
   await expect(page.getByRole('heading', { name: 'Choose your gift.' })).toBeVisible();
+  await page.locator('.site-header nav').getByRole('link', { name: 'Home', exact: true }).click();
+  await expect(page.locator('.site-header nav').getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('aria-current', 'page');
   await page.getByRole('link', { name: 'BOAN home', exact: true }).click();
   await expect(page).toHaveURL(/index.html$/);
 });
@@ -110,6 +112,10 @@ test('mobile menu closes on navigation and Escape; support remains prominent', a
   await expect(page).toHaveURL(/about-us.html$/);
   await expect(page.locator('.menu-toggle')).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Open menu', exact: true }).click();
+  await page.locator('.site-header nav').getByRole('link', { name: 'Home', exact: true }).click();
+  await expect(page).toHaveURL(/index.html$/);
+  await expect(page.getByRole('heading', { name: 'Feel supported. Grow stronger. Thrive together.', exact: true })).toBeVisible();
 });
 
 test('all pages fit narrow and wide screens, have no page errors and no broken local links', async ({ page, request }) => {
@@ -122,6 +128,14 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
       await page.goto('/' + file);
       await page.evaluate(() => document.fonts.ready);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${file} overflows at ${width}`).toBe(true);
+      if (file === 'index.html') {
+        const widths = await page.locator('#hero-title').evaluate(heading => ({
+          available: heading.getBoundingClientRect().width,
+          lines: [...heading.querySelectorAll('.hero-line')].map(line => line.getBoundingClientRect().width),
+        }));
+        expect(widths.lines).toHaveLength(3);
+        for (const lineWidth of widths.lines) expect(lineWidth, `Headline clips at ${width}px`).toBeLessThanOrEqual(widths.available + 1);
+      }
     }
     await expect(page.locator('.hero-reassurance, .eyebrow, .card-number, .art-caption, .art-overline, .art-bottom, .announcement, .brand-name')).toHaveCount(0);
     for (const selector of ['.site-header .brand-mark', '.footer-top .brand-mark']) {
@@ -146,7 +160,7 @@ test('downloadable single-file mockup navigates all pages and donation choices o
   await context.setOffline(true);
   await page.goto('/mockup.html');
   const site = page.frameLocator('#site');
-  await expect(site.getByRole('heading', { name: 'Your space. Your strength. Our future.' })).toBeVisible();
+  await expect(site.getByRole('heading', { name: 'Feel supported. Grow stronger. Thrive together.' })).toBeVisible();
   await site.getByRole('button', { name: 'Next testimonial', exact: true }).click();
   await expect(site.locator('#testimonial-slide-2 figcaption')).toHaveText('Mary J');
   await expect(site.locator('#testimonial-slide-2')).toBeVisible();
