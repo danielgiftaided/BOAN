@@ -15,7 +15,7 @@ npm run dev -- --port 3000
 
 The website has six genuine HTML pages, not homepage tabs:
 
-- `index.html` — mission, programmes, ways to get involved and the impact of support.
+- `index.html` — hero, community testimonials, mission, programmes, community invitation and the impact of support.
 - `about-us.html` — purpose, values and community-led approach.
 - `our-programs.html` — Movement, Workshops, Creative and Retreats.
 - `get-involved.html` — participation, volunteering, partnerships, ambassador opportunities and financial support.
@@ -42,6 +42,12 @@ The preview command produces:
 Both exports include `noindex,nofollow` directives. Their forms are demonstrations. In the single-file export, `BOAN_PREVIEW_SEARCH` and `BOAN_PREVIEW_HASH` supply the current simulated page location to the shared interaction code.
 
 The `gh-pages` branch contains a separate static design-preview package. Downloading its GitHub source archive gives a ZIP with `index.html`, the other five pages and `BOAN-interactive-mockup.html`. Open either `index.html` or `BOAN-interactive-mockup.html` after extracting the ZIP. Source branch commits do not automatically update `gh-pages`; publish the refreshed standalone files separately. Hosting status is not established by publishing these files. To enable a hosted preview, a repository administrator can select **Settings → Pages → Deploy from a branch → gh-pages → / (root)** and save.
+
+## Homepage testimonials
+
+The two supplied testimonials are stored in `src/content/testimonials.js`. They appear in full in place of the former three introductory cards. The carousel uses previous/next buttons, direct selectors, keyboard arrows/Home/End and touch swipes, with a short announced status and no automatic rotation. One quote is shown at a time; Gemma Jermaine is first, followed by Mary J. No ratings or portraits have been invented.
+
+The hero’s two former action buttons are removed. Main navigation and links elsewhere on the homepage still lead to the dedicated pages. The “Bring your story. Find your people.” section now appears immediately before the support feature.
 
 ## Giving and contact previews
 

@@ -140,6 +140,9 @@ test('downloadable single-file mockup navigates all pages and donation choices o
   await page.goto('/mockup.html');
   const site = page.frameLocator('#site');
   await expect(site.getByRole('heading', { name: 'Your space. Your strength. Our future.' })).toBeVisible();
+  await site.getByRole('button', { name: 'Next testimonial', exact: true }).click();
+  await expect(site.locator('#testimonial-slide-2 figcaption')).toHaveText('Mary J');
+  await expect(site.locator('#testimonial-slide-2')).toBeVisible();
   for (const [label, file] of links) {
     await site.locator('.site-header nav').getByRole('link', { name: label, exact: true }).click();
     await expect(site.locator('body')).toHaveAttribute('data-page', file);
@@ -229,4 +232,67 @@ test('single gifts hide monthly impact; custom monthly amounts never retain stal
   await expect(panel).toBeVisible();
   await expect(page.locator('#monthly-impact-amount')).toHaveText('£20 a month.');
   await expect(page.locator('#monthly-impact-description')).toHaveText('Support one woman to attend two sessions each month.');
+});
+
+
+test('homepage replaces hero buttons and journey cards with complete, accessible testimonials in the requested order', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.empowerment-hero .hero-actions')).toHaveCount(0);
+  await expect(page.locator('.empowerment-hero a, .empowerment-hero button')).toHaveCount(0);
+  await expect(page.locator('.journeys')).toHaveCount(0);
+  const structure = await page.locator('main').evaluate(main => [...main.children].map(section => section.classList[0]));
+  expect(structure[0]).toBe('empowerment-hero');
+  expect(structure[1]).toBe('testimonials');
+  expect(structure.indexOf('support-feature')).toBe(structure.indexOf('belonging') + 1);
+  const first = page.locator('#testimonial-slide-1');
+  const second = page.locator('#testimonial-slide-2');
+  await expect(first).toBeVisible();
+  await expect(second).not.toBeVisible();
+  await expect(first.locator('blockquote p')).toHaveCount(4);
+  await expect(first.locator('blockquote')).toContainText('Wow, where do I start with my reformer Pilates journey?!');
+  await expect(first.locator('blockquote')).toContainText('it’s my little bit of time for myself, and I absolutely love it!');
+  await expect(first.locator('figcaption')).toHaveText('Gemma Jermaine');
+  const next = page.getByRole('button', { name: 'Next testimonial', exact: true });
+  await next.click();
+  await expect(first).not.toBeVisible();
+  await expect(second).toBeVisible();
+  await expect(second.locator('blockquote p')).toHaveCount(3);
+  await expect(second.locator('blockquote')).toContainText('I think of my twice-a-week reformer Pilates classes');
+  await expect(second.locator('blockquote')).toContainText('This is definitely something I intend to continue for life!');
+  await expect(second.locator('figcaption')).toHaveText('Mary J');
+  await expect(page.locator('.testimonial-status')).toHaveText('2 of 2 — Mary J');
+  await next.click();
+  await expect(first).toBeVisible();
+  await page.getByRole('button', { name: 'Previous testimonial', exact: true }).click();
+  await expect(second).toBeVisible();
+  await next.focus();
+  await next.press('ArrowLeft');
+  await expect(first).toBeVisible();
+  await next.press('End');
+  await expect(second).toBeVisible();
+  await next.press('Home');
+  await expect(first).toBeVisible();
+  await page.getByRole('button', { name: 'Read testimonial from Mary J', exact: true }).click();
+  await expect(second).toBeVisible();
+  await expect(page.locator('.testimonial-dot[aria-current="true"]')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Read testimonial from Gemma Jermaine', exact: true }).click();
+  await expect(first).toBeVisible();
+});
+
+test('testimonials support mobile buttons and horizontal swipes while leaving vertical gestures alone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Next testimonial', exact: true }).click();
+  await expect(page.locator('#testimonial-slide-2')).toBeVisible();
+  const stage = page.locator('.testimonial-slides');
+  await stage.dispatchEvent('pointerdown', { pointerType: 'touch', clientX: 300, clientY: 200 });
+  await stage.dispatchEvent('pointerup', { pointerType: 'touch', clientX: 100, clientY: 210 });
+  await expect(page.locator('#testimonial-slide-1')).toBeVisible();
+  await stage.dispatchEvent('pointerdown', { pointerType: 'touch', clientX: 180, clientY: 100 });
+  await stage.dispatchEvent('pointerup', { pointerType: 'touch', clientX: 170, clientY: 300 });
+  await expect(page.locator('#testimonial-slide-1')).toBeVisible();
+  await stage.dispatchEvent('pointerdown', { pointerType: 'touch', clientX: 100, clientY: 200 });
+  await stage.dispatchEvent('pointerup', { pointerType: 'touch', clientX: 300, clientY: 205 });
+  await expect(page.locator('#testimonial-slide-2')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
