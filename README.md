@@ -17,12 +17,12 @@ The website has six genuine HTML pages, not homepage tabs:
 
 - `index.html` — mission, programmes, ways to get involved and the impact of support.
 - `about-us.html` — purpose, values and community-led approach.
-- `our-programs.html` — Movement with SNB Hive, Nutrition, Workshops and Retreats.
-- `get-involved.html` — participation, volunteering, partnerships and financial support.
+- `our-programs.html` — Movement, Workshops, Creative and Retreats.
+- `get-involved.html` — participation, volunteering, partnerships, ambassador opportunities and financial support.
 - `contact-us.html` — enquiry preview with relevant topics and a local draft download.
 - `support-our-work.html` — single/monthly donation choices and the £35 monthly fitness support message.
 
-Edit shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, styling in `src/style.css`, and interactions in `src/main.js`. `npm run pages` generates the six root HTML files. Generation also runs automatically before development and production builds. Keep the generated HTML committed so the page structure and navigation can be reviewed without running JavaScript.
+Edit BOAN’s supplied wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, styling in `src/style.css`, and interactions in `src/main.js`. `npm run pages` generates the six root HTML files. Generation also runs automatically before development and production builds. Keep the generated HTML committed so the page structure and navigation can be reviewed without running JavaScript.
 
 ## Build and interactive previews
 

@@ -31,6 +31,14 @@ test('programme links and involvement links reach their dedicated content and co
   await page.goto('/get-involved.html');
   await page.getByRole('link', { name: 'Talk about volunteering' }).click();
   await expect(page.locator('#contact-topic')).toHaveValue('volunteering');
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Explore creative', exact: true }).click();
+  await expect(page).toHaveURL(/our-programs.html#creative$/);
+  await page.getByRole('link', { name: 'Ask about creative', exact: true }).click();
+  await expect(page.locator('#contact-topic')).toHaveValue('creative');
+  await page.goto('/get-involved.html');
+  await page.getByRole('link', { name: 'Ask about becoming an ambassador', exact: true }).click();
+  await expect(page.locator('#contact-topic')).toHaveValue('ambassador');
 });
 
 test('monthly £35 default, review disclosure and single-gift change stay consistent', async ({ page }) => {
