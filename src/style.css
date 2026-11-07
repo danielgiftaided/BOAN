@@ -18,3 +18,6 @@
 /* Readable layouts for the organisation’s full page copy. */
 .community-statement{background:var(--blush)}.community-statement>.prose,.programme-purpose>.prose{max-width:920px;margin:auto}.community-statement p,.programme-purpose p{font-size:22px;line-height:1.7;margin:0;letter-spacing:-.4px}.community-statement strong,.programme-purpose strong{font-weight:500}.mission-section{background:var(--pale-green)}.mission-section .prose p:last-child{margin-bottom:0}.programme-purpose{background:var(--blush)}.program-detail .detail-description{margin:20px 0}.program-detail .button{margin-top:8px}.support-statement{font-size:13px;line-height:1.85;margin:25px 0}.page-intro .page-description{max-width:780px}.page-intro .page-description+.page-description{margin-top:15px}.prose p{max-width:70ch}
 @media(max-width:700px){.community-statement p,.programme-purpose p{font-size:18px;line-height:1.8}.program-detail .detail-description{margin:18px 0}.support-statement{font-size:12px}}
+
+/* Amount-specific monthly impact, omitted for single gifts and invalid input. */
+.monthly-impact[hidden]{display:none}.preset-amounts[data-frequency="monthly"]{grid-template-columns:repeat(5,minmax(0,1fr))}@media(max-width:1100px){.preset-amounts[data-frequency="monthly"]{grid-template-columns:repeat(3,minmax(0,1fr))}}

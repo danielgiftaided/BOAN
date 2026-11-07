@@ -152,6 +152,10 @@ test('downloadable single-file mockup navigates all pages and donation choices o
   await expect(site.getByLabel('Your message', { exact: true })).toHaveValue('I’m interested in supporting BOAN with a monthly gift of £35.');
   await page.goBack();
   await expect(site.locator('body')).toHaveAttribute('data-page', 'support-our-work.html');
+  await site.getByLabel('£100', { exact: true }).check();
+  await expect(site.locator('#monthly-impact-description')).toHaveText('Support 10 women to attend one class of their choice each month.');
+  await site.getByLabel('Single donation', { exact: true }).check();
+  await expect(site.locator('#monthly-impact')).not.toBeVisible();
   expect(assetRequests).toEqual([]);
 });
 
@@ -163,4 +167,61 @@ test('mobile giving shortcut reaches the donation choices below the sticky heade
   await expect(page).toHaveURL(/#donation-form$/);
   await expect(page.locator('#donation-form')).toBeFocused();
   await expect(page.getByRole('heading', { name: 'Choose your gift.' })).toBeInViewport();
+});
+
+
+test('monthly amounts update the left-hand impact and review with the correct sessions and beneficiaries', async ({ page }) => {
+  await page.goto('/support-our-work.html');
+  const panel = page.locator('#monthly-impact');
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#preset-amounts input')).toHaveCount(5);
+  await expect(page.getByLabel('£50', { exact: true })).toHaveCount(0);
+  const scenarios = [
+    [10, 'Support one woman to attend one pay-as-you-go session each month.'],
+    [60, 'Support one woman to attend four reformer Pilates sessions each month — one session a week.'],
+    [100, 'Support 10 women to attend one class of their choice each month.'],
+    [35, 'Support one woman to attend fitness classes for a month.'],
+  ];
+  for (const [amount, description] of scenarios) {
+    await page.getByLabel('£' + amount, { exact: true }).check();
+    await expect(page.locator('#monthly-impact-amount')).toHaveText(`£${amount} a month.`);
+    await expect(page.locator('#monthly-impact-description')).toHaveText(description);
+    await expect(page.locator('#gift-impact')).toHaveText(description);
+    await page.getByRole('button', { name: 'Review my support' }).click();
+    await expect(page.locator('#review-amount')).toHaveText(`£${amount} every month`);
+    await expect(page.locator('#review-impact')).toHaveText(description);
+    await page.getByRole('button', { name: 'Change my choice' }).click();
+  }
+});
+
+test('single gifts hide monthly impact; custom monthly amounts never retain stale benefits', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/support-our-work.html');
+  const panel = page.locator('#monthly-impact');
+  await page.getByLabel('£100', { exact: true }).check();
+  await expect(panel).toContainText('10 women');
+  await page.getByLabel('Single donation', { exact: true }).check();
+  await expect(panel).not.toBeVisible();
+  await expect(page.getByLabel('£50', { exact: true })).toBeVisible();
+  await page.getByLabel('£50', { exact: true }).check();
+  await expect(panel).not.toBeVisible();
+  await page.getByLabel('Monthly donation', { exact: true }).check();
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#monthly-impact-amount')).toHaveText('£100 a month.');
+  const custom = page.getByLabel('Or enter another amount (£)', { exact: true });
+  await custom.fill('60.00');
+  await expect(panel).toContainText('four reformer Pilates sessions');
+  await custom.fill('12.50');
+  await expect(page.locator('#monthly-impact-amount')).toHaveText('£12.50 a month.');
+  await expect(panel).toContainText('Help widen access');
+  await expect(panel).not.toContainText('Pilates');
+  await expect(panel).not.toContainText('10 women');
+  await custom.fill('0');
+  await expect(panel).not.toBeVisible();
+  await page.getByRole('button', { name: 'Review my support' }).click();
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+  await page.getByLabel('£20', { exact: true }).check();
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#monthly-impact-amount')).toHaveText('£20 a month.');
+  await expect(panel).toContainText('Help widen access');
 });
