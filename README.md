@@ -45,9 +45,9 @@ The `gh-pages` branch contains a separate static design-preview package. Downloa
 
 ## Homepage testimonials
 
-The two supplied testimonials are stored in `src/content/testimonials.js`. They appear in full in place of the former three introductory cards. The carousel uses previous/next buttons, direct selectors, keyboard arrows/Home/End and touch swipes, with a short announced status and no automatic rotation. One quote is shown at a time; Gemma Jermaine is first, followed by Mary J. No ratings or portraits have been invented.
+The two supplied testimonials are stored in `src/content/testimonials.js`. Short, verbatim excerpts appear in pink and green quote cards in place of the former three introductory cards. The original full text is retained in the content source; the carousel displays only the selected excerpts. The carousel uses previous/next buttons, direct selectors, keyboard arrows/Home/End and touch swipes, with a screen-reader status and no automatic rotation. One quote is shown at a time; Gemma Jermaine is first, followed by Mary J. No ratings or portraits have been invented.
 
-The hero’s two former action buttons are removed. Main navigation and links elsewhere on the homepage still lead to the dedicated pages. The “Bring your story. Find your people.” section now appears immediately before the support feature.
+The hero’s two former action buttons, reassurance badges, announcement strip and decorative micro-headings are removed. Decorative labels and image captions are omitted across all six pages, while functional navigation and form guidance remain. The header and footer use the original logo mask with green lettering and a pink wordmark, without the additional small brand label. Main navigation and links elsewhere on the homepage still lead to the dedicated pages. The “Bring your story. Find your people.” section now appears immediately before the support feature.
 
 ## Giving and contact previews
 

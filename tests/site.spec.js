@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { testimonials } from '../src/content/testimonials.js';
 const links = [['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
 const files = ['index.html', ...links.map(([, file]) => file), 'support-our-work.html'];
 
@@ -122,6 +123,12 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
       await page.evaluate(() => document.fonts.ready);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${file} overflows at ${width}`).toBe(true);
     }
+    await expect(page.locator('.hero-reassurance, .eyebrow, .card-number, .art-caption, .art-overline, .art-bottom, .announcement, .brand-name')).toHaveCount(0);
+    for (const selector of ['.site-header .brand-mark', '.footer-top .brand-mark']) {
+      const background = await page.locator(selector).evaluate(element => getComputedStyle(element).backgroundImage);
+      expect(background).toContain('rgb(119, 210, 0)');
+      expect(background).toContain('rgb(255, 102, 196)');
+    }
     for (const href of await page.locator('a[href]').evaluateAll(anchors => anchors.map(a => a.getAttribute('href')))) {
       if (href.startsWith('#')) expect(await page.locator(href).count(), `${file}: missing ${href}`).toBe(1);
       else if (href.includes('.html')) targets.add(href.split(/[?#]/)[0]);
@@ -235,7 +242,7 @@ test('single gifts hide monthly impact; custom monthly amounts never retain stal
 });
 
 
-test('homepage replaces hero buttons and journey cards with complete, accessible testimonials in the requested order', async ({ page }) => {
+test('homepage shows short verbatim testimonials in brand-coloured cards with accessible controls', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.empowerment-hero .hero-actions')).toHaveCount(0);
   await expect(page.locator('.empowerment-hero a, .empowerment-hero button')).toHaveCount(0);
@@ -248,17 +255,21 @@ test('homepage replaces hero buttons and journey cards with complete, accessible
   const second = page.locator('#testimonial-slide-2');
   await expect(first).toBeVisible();
   await expect(second).not.toBeVisible();
-  await expect(first.locator('blockquote p')).toHaveCount(4);
-  await expect(first.locator('blockquote')).toContainText('Wow, where do I start with my reformer Pilates journey?!');
-  await expect(first.locator('blockquote')).toContainText('it’s my little bit of time for myself, and I absolutely love it!');
+  for (const quote of testimonials) {
+    expect(quote.paragraphs.join(' ')).toContain(quote.excerpt);
+    expect(quote.excerpt.split(/\s+/).length).toBeLessThan(40);
+  }
+  await expect(first.locator('blockquote p')).toHaveCount(1);
+  await expect(first.locator('blockquote')).toHaveText('I feel so much better within myself, and it’s become such a positive part of my life.');
+  await expect(first).toHaveCSS('background-color', 'rgb(255, 102, 196)');
   await expect(first.locator('figcaption')).toHaveText('Gemma Jermaine');
   const next = page.getByRole('button', { name: 'Next testimonial', exact: true });
   await next.click();
   await expect(first).not.toBeVisible();
   await expect(second).toBeVisible();
-  await expect(second.locator('blockquote p')).toHaveCount(3);
-  await expect(second.locator('blockquote')).toContainText('I think of my twice-a-week reformer Pilates classes');
-  await expect(second.locator('blockquote')).toContainText('This is definitely something I intend to continue for life!');
+  await expect(second.locator('blockquote p')).toHaveCount(1);
+  await expect(second.locator('blockquote')).toHaveText('I’ve noticed a massive difference not only in my core strength and balance, but in my general physical and mental health too.');
+  await expect(second).toHaveCSS('background-color', 'rgb(119, 210, 0)');
   await expect(second.locator('figcaption')).toHaveText('Mary J');
   await expect(page.locator('.testimonial-status')).toHaveText('2 of 2 — Mary J');
   await next.click();
