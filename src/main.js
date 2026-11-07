@@ -156,3 +156,44 @@ if (giving) {
   });
   renderAmounts();
 }
+
+const testimonialCarousel = document.querySelector('[data-testimonial-carousel]');
+if (testimonialCarousel) {
+  const slides = [...testimonialCarousel.querySelectorAll('[data-testimonial-slide]')];
+  const dots = [...testimonialCarousel.querySelectorAll('[data-testimonial-index]')];
+  const status = testimonialCarousel.querySelector('.testimonial-status');
+  const stage = testimonialCarousel.querySelector('.testimonial-slides');
+  let selected = 0;
+  function showTestimonial(index) {
+    selected = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => { slide.hidden = i !== selected; });
+    dots.forEach((dot, i) => {
+      if (i === selected) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
+    status.textContent = `${selected + 1} of ${slides.length} — ${slides[selected].dataset.author}`;
+  }
+  testimonialCarousel.querySelectorAll('[data-testimonial-step]').forEach(button => {
+    button.addEventListener('click', () => showTestimonial(selected + Number(button.dataset.testimonialStep)));
+  });
+  dots.forEach(dot => dot.addEventListener('click', () => showTestimonial(Number(dot.dataset.testimonialIndex))));
+  testimonialCarousel.querySelector('.testimonial-controls').addEventListener('keydown', event => {
+    const destinations = { ArrowLeft: selected - 1, ArrowRight: selected + 1, Home: 0, End: slides.length - 1 };
+    if (Object.hasOwn(destinations, event.key)) {
+      event.preventDefault();
+      showTestimonial(destinations[event.key]);
+    }
+  });
+  let touchStart = null;
+  stage.addEventListener('pointerdown', event => {
+    touchStart = event.pointerType === 'touch' ? { x: event.clientX, y: event.clientY } : null;
+  });
+  stage.addEventListener('pointerup', event => {
+    if (!touchStart || event.pointerType !== 'touch') return;
+    const dx = event.clientX - touchStart.x;
+    const dy = event.clientY - touchStart.y;
+    touchStart = null;
+    if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.5) showTestimonial(selected + (dx < 0 ? 1 : -1));
+  });
+  stage.addEventListener('pointercancel', () => { touchStart = null; });
+}
