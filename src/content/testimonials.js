@@ -2,6 +2,8 @@
 export const testimonials = [
   {
     name: 'Gemma Jermaine',
+    excerpt: `I feel so much better within myself, and it’s become such a positive part of my life.`,
+    colour: 'pink',
     paragraphs: [
       `Wow, where do I start with my reformer Pilates journey?! ✨`,
       `I honestly feel amazing! Not only has my body changed, both in how it looks and how it feels, but I’ve also noticed such a huge difference in my confidence and overall mental and physical wellbeing. I feel so much better within myself, and it’s become such a positive part of my life.`,
@@ -11,6 +13,8 @@ export const testimonials = [
   },
   {
     name: 'Mary J',
+    excerpt: `I’ve noticed a massive difference not only in my core strength and balance, but in my general physical and mental health too.`,
+    colour: 'green',
     paragraphs: [
       `I think of my twice-a-week reformer Pilates classes as a true gift to myself in my 40s. They have become an essential, non-negotiable part of my routine—a little something to give back to myself and enjoy some well-deserved me-time.`,
       `I’ve noticed a massive difference not only in my core strength and balance, but in my general physical and mental health too. Laura, our instructor, is amazing and keeps every session just the right amount of challenging while still being so much fun. Sharing that space with such a lovely, supportive group of ladies makes it even more special.`,
