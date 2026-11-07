@@ -11,6 +11,8 @@ npm ci --cache /tmp/boan-npm-cache
 npm run dev -- --port 3000
 ```
 
+The shared navigation starts with Home on every page. The homepage headline reads “Feel supported. Grow stronger. Thrive together.” in three lines.
+
 ## Pages and editing
 
 The website has six genuine HTML pages, not homepage tabs:
