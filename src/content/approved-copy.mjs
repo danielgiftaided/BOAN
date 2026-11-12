@@ -1,9 +1,9 @@
 // Organisation copy supplied by BOAN for these pages.
 export const aboutCopy = [
-  `<strong>Builders of a Nation CIC (BOAN)</strong> is a community-led organisation dedicated to empowering women, strengthening communities and creating opportunities for people to connect, grow and thrive.`,
+  `<strong>Builders of a Nation CIC (BOAN)</strong> is a community-led organisation dedicated to empowering women, strengthening communities and creating opportunities for women to connect, grow and thrive.`,
   `Founded on the belief that strong communities begin with supported, confident and empowered individuals, BOAN aims to break down barriers, tackle social isolation and improve access to wellbeing, education and personal development opportunities. We believe that everyone deserves a safe, welcoming and inclusive environment where they feel valued, supported and inspired to reach their full potential.`,
   `Our work focuses on bringing women together through health and wellbeing activities, educational programmes, creative workshops, social initiatives and community events. By encouraging meaningful connections, building confidence and developing new skills, we aim to create lasting positive change in the lives of individuals and the wider community.`,
-  `At the heart of our vision is the creation of a dedicated women's community hub in Hackney — a welcoming space where women of all ages, cultures and backgrounds can come together, access opportunities, share experiences and find a genuine sense of belonging.`,
+  `At the heart of our vision is the creation of a dedicated community hub in Hackney — a welcoming space where women of all ages, cultures and backgrounds can come together, access opportunities, share experiences and find a genuine sense of belonging.`,
   `<strong>BOAN is about more than delivering programmes. It's about building a community where women support one another, opportunities are accessible, and everyone has the chance to flourish. Together, we can build stronger women, stronger families and stronger communities.</strong>`,
 ];
 export const missionCopy = [
@@ -16,7 +16,7 @@ export const programmeIntro = [
   `Our programmes are designed to remove financial, social and practical barriers, creating opportunities for women of all ages and backgrounds to connect, learn, grow and thrive.`,
 ];
 export const programmeCopy = {
-  movement: [`Supporting physical and mental wellbeing through accessible, engaging activities such as Pilates, yoga, strength training, dance and fitness. Our movement programmes encourage women to build confidence, improve their health and discover the benefits of an active lifestyle in a welcoming and supportive environment.`],
+  movement: [`Supporting physical and mental wellbeing through accessible, engaging activities such as Pilates, yoga, Zumba, strength training, dance and fitness. Our movement programmes encourage women to build confidence, improve their health and discover the benefits of an active lifestyle in a welcoming and supportive environment.`],
   workshops: [
     `Empowering women through informative, engaging and practical workshops that address important aspects of everyday life. From women's health and wellbeing topics such as menopause, hormonal health and mental wellbeing, to financial education covering budgeting, saving, investing and building financial independence, our workshops aim to provide women with the knowledge, confidence and tools to make informed decisions.`,
     `We also explore personal development, self-defence and essential life skills, creating safe spaces for open conversations, shared experiences and learning from experienced professionals.`,
