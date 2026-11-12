@@ -45,6 +45,19 @@ Both exports include `noindex,nofollow` directives. Their forms are demonstratio
 
 The `gh-pages` branch contains a separate static design-preview package. Downloading its GitHub source archive gives a ZIP with `index.html`, the other five pages and `BOAN-interactive-mockup.html`. Open either `index.html` or `BOAN-interactive-mockup.html` after extracting the ZIP. Source branch commits do not automatically update `gh-pages`; publish the refreshed standalone files separately. Hosting status is not established by publishing these files. To enable a hosted preview, a repository administrator can select **Settings → Pages → Deploy from a branch → gh-pages → / (root)** and save.
 
+## Netlify hosting and the GoDaddy domain
+
+`netlify.toml` configures Node.js 24, the `npm run build` command and the `dist` publish directory. Import this GitHub repository into Netlify and choose `main` as the production branch after merging approved changes. Netlify will build the six-page production website from source. Its assigned `.netlify.app` address is the first deployment to review.
+
+To connect the existing GoDaddy domain:
+
+1. Add `www.boan.co.uk` and `boan.co.uk` in the Netlify project's domain settings. Choose `www.boan.co.uk` as primary.
+2. In GoDaddy, open the domain's DNS management. Set the `www` CNAME to the actual Netlify project hostname, without `https://` or a path. Use the apex/root DNS values shown by Netlify for `boan.co.uk`; do not guess an IP address.
+3. Preserve existing email DNS records. Domain registration can stay with GoDaddy.
+4. After DNS verifies, check Netlify's HTTPS provisioning and both domain variants. The primary domain should load the website and the other should redirect to it.
+
+No Netlify project, custom-domain connection or DNS change is created by committing this configuration. The contact and giving pages remain previews as described below; connect enquiries to a verified destination before accepting live submissions. Donations can remain clearly marked as coming soon until a provider is configured.
+
 ## Homepage testimonials
 
 The two supplied testimonials are stored in `src/content/testimonials.js`. Short, verbatim excerpts appear in pink and green quote cards in place of the former three introductory cards. The original full text is retained in the content source; the carousel displays only the selected excerpts. The carousel uses previous/next buttons, direct selectors, keyboard arrows/Home/End and touch swipes, with a screen-reader status and no automatic rotation. One quote is shown at a time; Gemma Jermaine is first, followed by Mary J. No ratings or portraits have been invented.
