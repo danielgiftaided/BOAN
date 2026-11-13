@@ -1,3 +1,4 @@
+import './contact-form.js';
 import { donationPresets, getMonthlyImpact } from './content/donation-options.js';
 import '@fontsource/dm-sans/400.css';
 import '@fontsource/dm-sans/500.css';
@@ -40,29 +41,6 @@ function updateProgramLocation() {
 window.addEventListener('hashchange', updateProgramLocation);
 updateProgramLocation();
 document.querySelector('#year').textContent = new Date().getFullYear();
-
-function downloadText(filename, text) {
-  const url = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-const contact = document.querySelector('#contact-form');
-if (contact) {
-  const params = new URLSearchParams(window.BOAN_PREVIEW_SEARCH ?? location.search);
-  const topic = contact.elements.topic;
-  if ([...topic.options].some(option => option.value === params.get('topic'))) topic.value = params.get('topic');
-  if (params.has('message')) contact.elements.message.value = params.get('message').slice(0, 5000);
-  contact.addEventListener('submit', event => {
-    event.preventDefault();
-    const data = new FormData(contact);
-    downloadText('my-boan-enquiry.txt', `BOAN — enquiry draft\n\nName: ${data.get('name')}\nEmail: ${data.get('email')}\nTopic: ${topic.selectedOptions[0].textContent}\n\n${data.get('message')}\n\nThis is a saved enquiry draft. It has not been sent to BOAN.\n`);
-    document.querySelector('#contact-result').textContent = 'Your enquiry draft is ready to download. It has not been sent to BOAN.';
-  });
-}
 
 const giving = document.querySelector('#donation-form');
 if (giving) {

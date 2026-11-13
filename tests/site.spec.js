@@ -84,23 +84,6 @@ test('custom gift rejects invalid money, preserves pennies, and carries the righ
   await expect(page.getByLabel('Your message', { exact: true })).toHaveValue('I’m interested in supporting BOAN with a monthly gift of £12.50.');
 });
 
-test('contact validates and saves a draft rather than reporting a sent enquiry', async ({ page }) => {
-  await page.goto('/contact-us.html');
-  await page.getByRole('button', { name: 'Save my enquiry' }).click();
-  expect(await page.getByLabel('Your name', { exact: true }).evaluate(input => input.validity.valueMissing)).toBe(true);
-  await expect(page.locator('#contact-result')).toBeEmpty();
-  await page.getByLabel('Your name', { exact: true }).fill('Preview User');
-  await page.getByLabel('Email address', { exact: true }).fill('preview@example.com');
-  await page.getByLabel('Your message', { exact: true }).fill('I would like to ask about BOAN programmes.');
-  const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('button', { name: 'Save my enquiry' }).click();
-  const download = await downloadPromise;
-  const text = await readFile(await download.path(), 'utf8');
-  expect(text).toContain('It has not been sent to BOAN.');
-  expect(text).toContain('I would like to ask about BOAN programmes.');
-  await expect(page.locator('#contact-result')).toContainText('not been sent to BOAN');
-});
-
 test('mobile menu closes on navigation and Escape; support remains prominent', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
@@ -152,7 +135,7 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
   expect(errors).toEqual([]);
 });
 
-test('downloadable single-file mockup navigates all pages and donation choices offline', async ({ page, context }) => {
+test('downloadable mockup navigates all pages and donations offline without sending contact messages', async ({ page, context }) => {
   const html = await readFile(resolve('docs/boan-interactive-preview.html'), 'utf8');
   const assetRequests = [];
   page.on('request', request => { if (request.resourceType() !== 'document' && /^https?:/.test(request.url())) assetRequests.push(request.url()); });
@@ -184,6 +167,13 @@ test('downloadable single-file mockup navigates all pages and donation choices o
   await site.getByLabel('Monthly donation', { exact: true }).check();
   await site.getByLabel('£20', { exact: true }).check();
   await expect(site.locator('#monthly-impact-description')).toHaveText('Support one woman to attend two sessions each month.');
+  await site.getByRole('button', { name: 'Review my support' }).click();
+  await site.getByRole('link', { name: 'Ask about giving' }).click();
+  await site.getByLabel('Your name', { exact: true }).fill('Preview User');
+  await site.getByLabel('Email address', { exact: true }).fill('preview@example.com');
+  await site.getByRole('button', { name: 'Send message', exact: true }).click();
+  await expect(site.locator('#contact-result')).toContainText('This preview cannot send messages');
+  await expect(site.getByLabel('Your message', { exact: true })).toHaveValue('I’m interested in supporting BOAN with a monthly gift of £20.');
   expect(assetRequests).toEqual([]);
 });
 
