@@ -1,0 +1,4 @@
+# Giving is paused until a payment processor is configured.
+/support-our-work.html  /contact-us.html?topic=support  302!
+/support-our-work       /contact-us.html?topic=support  302!
+/support-our-work/      /contact-us.html?topic=support  302!

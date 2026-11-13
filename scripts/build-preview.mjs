@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { resolve, dirname, extname } from 'node:path';
 import { pages } from '../src/site-content.mjs';
 
@@ -35,16 +35,20 @@ async function inlinePage(file) {
   for (const [match, asset] of [...html.matchAll(/src="([^"]+)"/g)]) {
     if (!asset.startsWith('data:')) html = html.replace(match, `src="${await dataUrl(asset, path)}"`);
   }
-  return html.replace('</head>', '<meta name="robots" content="noindex,nofollow"/></head>');
+  for (const [match, asset] of [...html.matchAll(/<link\b[^>]*rel="icon"[^>]*href="([^"]+)"[^>]*>/g)]) {
+    html = html.replace(match, match.replace(asset, await dataUrl(asset, path)));
+  }
+  return html.replace('</head>', '<meta name="robots" content="noindex,nofollow"/><script>window.BOAN_OFFLINE_PREVIEW=true;</script></head>');
 }
 await mkdir(resolve(root, 'docs/preview'), { recursive: true });
+await rm(resolve(root, 'docs/preview/support-our-work.html'), { force: true });
 const documents = {};
 for (const page of pages) {
   documents[page.file] = await inlinePage(page.file);
   await writeFile(resolve(root, 'docs/preview', page.file), documents[page.file]);
 }
 const source = JSON.stringify(documents).replaceAll('<', '\\u003c');
-const single = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BOAN — Interactive website mockup</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="site" title="BOAN interactive website preview"></iframe><script>
+const single = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" type="image/svg+xml" href="${await dataUrl('/favicon.svg', resolve(dist, 'index.html'))}"><title>BOAN — Interactive website mockup</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden}iframe{border:0;width:100%;height:100%;display:block}</style></head><body><iframe id="site" title="BOAN interactive website preview"></iframe><script>
 const documents=${source};
 const frame=document.getElementById('site');
 let current='index.html';

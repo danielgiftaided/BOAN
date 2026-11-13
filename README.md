@@ -1,6 +1,6 @@
 # BOAN — Builders Of A Nation
 
-A women-only community website using BOAN’s original logo and presentation palette: pink `#FF66C4`, green `#77D200` and navy `#010A4F`.
+A women-only community website using BOAN’s original logo and presentation palette: pink `#FF66C4`, green `#77D200` and navy `#010A4F`. The public domain is **www.boan.uk**.
 
 ## Development
 
@@ -11,20 +11,48 @@ npm ci --cache /tmp/boan-npm-cache
 npm run dev -- --port 3000
 ```
 
-The shared navigation starts with Home on every page. The homepage headline reads “Feel supported. Grow stronger. Thrive together.” in three lines.
-
 ## Pages and editing
 
-The website has six genuine HTML pages, not homepage tabs:
+The public website has five dedicated HTML pages:
 
-- `index.html` — hero, community testimonials, mission, programmes, community invitation and the impact of support.
-- `about-us.html` — purpose, values and community-led approach.
+- `index.html` — empowerment hero, testimonials, mission, programmes, community invitation and FAQ.
+- `about-us.html` — organisation story, vision and mission.
 - `our-programs.html` — Movement, Workshops, Creative and Retreats.
-- `get-involved.html` — participation, volunteering, partnerships, ambassador opportunities and financial support.
-- `contact-us.html` — enquiry preview with relevant topics and a local draft download.
-- `support-our-work.html` — single/monthly donation choices and the £35 monthly fitness support message.
+- `get-involved.html` — volunteering, partnerships and ambassador opportunities.
+- `contact-us.html` — enquiry form and a direct link to `hello@boan.uk`.
 
-Edit BOAN’s supplied wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, styling in `src/style.css`, and interactions in `src/main.js`. `npm run pages` generates the six root HTML files. Generation also runs automatically before development and production builds. Keep the generated HTML committed so the page structure and navigation can be reviewed without running JavaScript.
+Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the five root HTML files, including before development and production builds. Keep these generated HTML files committed.
+
+`public/favicon.svg` embeds the original logo silhouette and renders it in the same green and pink as the header, with a light background so it stays legible on dark browser tabs. The icon is linked on every page and included inline in the offline previews.
+
+## Netlify deployment
+
+`netlify.toml` configures Node.js 24, `npm run build` and the `dist` publish directory. The production branch is `main`. Merge the approved PR and let the connected Netlify project build it. If the project uses manual uploads, build locally and upload the **contents of `dist`**, including `_redirects` and `assets`.
+
+The domain registered at GoDaddy is **boan.uk**, with `www.boan.uk` as primary. Its DNS is managed in Netlify. Use the nameservers assigned to the **boan.uk** zone, and preserve the Microsoft 365 email records supplied by GoDaddy for the actual mailbox domain. DNS, mailbox setup, HTTPS and project visitor access are account settings; committing source does not configure them.
+
+## Contact form: activate delivery to hello@boan.uk
+
+The generated static contact form is named **`boan-contact`**, uses `method="POST"`, `data-netlify="true"`, a matching hidden `form-name`, and a `bot-field` honeypot. It can submit without JavaScript using Netlify’s standard confirmation page. With JavaScript, it POSTs URL-encoded fields to Netlify, disables duplicate submissions while sending, confirms only after an accepted response, and retains the entered fields on errors/timeouts. The visitor’s `email` field enables replies to that visitor from Netlify’s notification. No credentials or email service keys are embedded in the website.
+
+**Required Netlify account configuration:**
+
+1. Open the BOAN project’s **Forms** area. Enable **form detection** if it is disabled.
+2. Deploy this change **after** form detection is enabled. Confirm **boan-contact** appears among the detected forms.
+3. In the project’s **Notifications** settings, find **Form submission notifications** and add an **Email notification**. Choose **boan-contact** (or all forms) and recipient **hello@boan.uk**. In dashboards that expose notifications from the form itself, use that form’s notification settings. Save the notification.
+4. From the deployed production contact page, submit a real test enquiry. Confirm the entry appears in Netlify Forms and the email arrives at **hello@boan.uk**, including checking junk/spam and Reply-To. Successful browser submission alone does not verify notification delivery.
+
+The email recipient is a **Netlify dashboard setting**, not an HTML attribute. This repository prepares form collection; it cannot enable form detection or create the email notification in an unauthenticated Netlify account. Mailbox delivery also requires the correct Microsoft 365 DNS records in the **boan.uk** zone if that is the email domain.
+
+Local Vite servers do not run Netlify Forms. Automated tests use intercepted endpoints and do not send real messages. Development and downloadable offline previews explicitly refuse to send; visitors can use the direct email link. Review current Netlify Forms usage/plan limits in the project dashboard.
+
+## Online giving is paused
+
+No donation page is emitted in the production build or offline mockup. Header/footer donation links, the homepage and Get Involved donation features, the contact-page giving prompt, and the monthly-gift FAQ wording are removed. The five main navigation tabs remain.
+
+`public/_redirects` temporarily redirects `/support-our-work.html`, `/support-our-work` and `/support-our-work/` to the contact page with the supporting-BOAN topic selected. Because this file is copied into `dist`, the redirects work for both Git builds and manual Netlify uploads. Local Vite preview does not emulate Netlify redirect rules.
+
+The previous donation template and behaviour are retained in `src/archive/donation-page.mjs` and `src/archive/donation-interactions.js`, with presets and approved impact wording in `src/content/donation-options.js`. They are not imported by the live site. To resume giving, connect and verify the payment processor, restore the page to the page list and its interactions, restore the intended links, and remove the temporary redirects. No payments, subscriptions or Gift Aid claims are implemented.
 
 ## Build and interactive previews
 
@@ -34,43 +62,15 @@ npm run preview -- --port 3000
 npm run preview:standalone
 ```
 
-The production output is in `dist/`. Relative URLs support deployment at a subpath such as GitHub Pages.
+Production output is in `dist/`. Relative asset URLs also support deployments at a subpath.
 
-The preview command produces:
+The standalone command produces five individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, omit giving, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
 
-- `docs/preview/`: six independently navigable HTML files with inline fonts, logo and JavaScript. Open `index.html` and keep the files together.
-- `docs/boan-interactive-preview.html`: a single-file mockup containing the same six pages. Its embedded preview frame preserves page navigation, queries, programme anchors and browser-back navigation without an external server.
+The separate `gh-pages` branch contains a design-preview package with `BOAN-interactive-mockup.html`. Source PRs do not automatically update that branch. Production Netlify deployments should use `dist`, not the offline mockup.
 
-Both exports include `noindex,nofollow` directives. Their forms are demonstrations. In the single-file export, `BOAN_PREVIEW_SEARCH` and `BOAN_PREVIEW_HASH` supply the current simulated page location to the shared interaction code.
+## Testimonials and branding
 
-The `gh-pages` branch contains a separate static design-preview package. Downloading its GitHub source archive gives a ZIP with `index.html`, the other five pages and `BOAN-interactive-mockup.html`. Open either `index.html` or `BOAN-interactive-mockup.html` after extracting the ZIP. Source branch commits do not automatically update `gh-pages`; publish the refreshed standalone files separately. Hosting status is not established by publishing these files. To enable a hosted preview, a repository administrator can select **Settings → Pages → Deploy from a branch → gh-pages → / (root)** and save.
-
-## Netlify hosting and the GoDaddy domain
-
-`netlify.toml` configures Node.js 24, the `npm run build` command and the `dist` publish directory. Import this GitHub repository into Netlify and choose `main` as the production branch after merging approved changes. Netlify will build the six-page production website from source. Its assigned `.netlify.app` address is the first deployment to review.
-
-To connect the existing GoDaddy domain:
-
-1. Add `www.boan.co.uk` and `boan.co.uk` in the Netlify project's domain settings. Choose `www.boan.co.uk` as primary.
-2. In GoDaddy, open the domain's DNS management. Set the `www` CNAME to the actual Netlify project hostname, without `https://` or a path. Use the apex/root DNS values shown by Netlify for `boan.co.uk`; do not guess an IP address.
-3. Preserve existing email DNS records. Domain registration can stay with GoDaddy.
-4. After DNS verifies, check Netlify's HTTPS provisioning and both domain variants. The primary domain should load the website and the other should redirect to it.
-
-No Netlify project, custom-domain connection or DNS change is created by committing this configuration. The contact and giving pages remain previews as described below; connect enquiries to a verified destination before accepting live submissions. Donations can remain clearly marked as coming soon until a provider is configured.
-
-## Homepage testimonials
-
-The two supplied testimonials are stored in `src/content/testimonials.js`. Short, verbatim excerpts appear in pink and green quote cards in place of the former three introductory cards. The original full text is retained in the content source; the carousel displays only the selected excerpts. The carousel uses previous/next buttons, direct selectors, keyboard arrows/Home/End and touch swipes, with a screen-reader status and no automatic rotation. One quote is shown at a time; Gemma Jermaine is first, followed by Mary J. No ratings or portraits have been invented.
-
-The hero’s two former action buttons, reassurance badges, announcement strip and decorative micro-headings are removed. Decorative labels and image captions are omitted across all six pages, while functional navigation and form guidance remain. The header and footer use the original logo mask with green lettering and a pink wordmark, without the additional small brand label. Main navigation and links elsewhere on the homepage still lead to the dedicated pages. The “Bring your story. Find your people.” section now appears immediately before the support feature.
-
-## Giving and contact previews
-
-The donation page defaults to £35 monthly, explaining that this can support a woman to attend fitness classes for a month. It offers suggested amounts for single and monthly giving, custom amounts in pounds/pence, live summaries, validation, and an explicit review dialog. Different monthly/single choices are remembered while switching frequency on that page. Invalid custom amounts cannot reach review. Monthly presets are £10, £20, £35, £60 and £100; single presets remain £10, £25, £50 and £100. The left-hand impact panel updates for monthly gifts and is hidden for single gifts or invalid custom input. £10 supports one woman’s monthly pay-as-you-go session; £20 supports two sessions each month for one woman; £60 supports four reformer Pilates sessions for one woman each month; £100 supports one class of their choice each month for 10 women. The £35 fitness message is retained. Single-gift summaries and reviews show the amount without the word “once”. Other valid monthly amounts use a general access message rather than invented session counts. Shared presets and impact copy live in `src/content/donation-options.js` and are used by both the page generator and browser.
-
-The user confirmed there is no donation platform yet. No payments, subscriptions, card collection or payment-success claims are implemented. A real giving provider and final payment terms remain pre-launch work. No Gift Aid or charitable tax status is assumed for the CIC. The review can pass the selected gift to the contact page as an enquiry draft.
-
-The contact form validates name, email and message, then downloads a local text draft. Nothing is sent or stored online. Before launching enquiries, configure a verified destination and update the form notice and submission behaviour. Programme dates, prices, contact details and bookings have not been invented.
+Original supplied stories and short, verbatim excerpts are stored in `src/content/testimonials.js`. Gemma Jermaine and Mary J appear in pink and green cards, with previous/next buttons, direct selectors, keyboard arrows/Home/End, touch swipes and screen-reader status. There is no automatic rotation. Header/footer branding and the favicon preserve the original logo geometry. The homepage retains the three-line headline “Feel supported. Grow stronger. Thrive together.” and the description “For the woman you are and the woman you’re becoming.”
 
 ## Browser checks
 
@@ -79,6 +79,6 @@ npm run preview:standalone
 npm run test:e2e
 ```
 
-Playwright uses `/usr/bin/chromium` when available. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for another system browser, or install the matching Playwright Chromium browser in your development environment.
+Playwright uses `/usr/bin/chromium` when present. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for another browser, or install the matching Playwright Chromium browser in your development environment.
 
-The suite checks distinct page navigation and reloads, programme anchors, enquiry topics and draft downloads, monthly/single/custom gift validation and review, mobile menus and giving shortcuts, responsive widths from 320 to 1440px, local link targets, and offline navigation through the single-file mockup without external asset requests.
+The suite checks five-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, absence of donation UI/output, redirect-file packaging, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.
