@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, dirname, extname } from 'node:path';
 import { pages } from '../src/site-content.mjs';
 
@@ -41,7 +41,6 @@ async function inlinePage(file) {
   return html.replace('</head>', '<meta name="robots" content="noindex,nofollow"/><script>window.BOAN_OFFLINE_PREVIEW=true;</script></head>');
 }
 await mkdir(resolve(root, 'docs/preview'), { recursive: true });
-await rm(resolve(root, 'docs/preview/support-our-work.html'), { force: true });
 const documents = {};
 for (const page of pages) {
   documents[page.file] = await inlinePage(page.file);

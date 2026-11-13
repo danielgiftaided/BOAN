@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { testimonials } from '../src/content/testimonials.js';
 const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
-const files = links.map(([, file]) => file);
+const files = [...links.map(([, file]) => file), 'support-our-work.html'];
 
 test('header links open distinct, reloadable pages with current-page state', async ({ page }) => {
   await page.goto('/');
@@ -15,7 +15,9 @@ test('header links open distinct, reloadable pages with current-page state', asy
     await expect(page.locator('.site-header nav').getByRole('link', { name: label, exact: true })).toHaveAttribute('aria-current', 'page');
     await expect(page.locator('main h1')).toHaveCount(1);
   }
-  await expect(page.getByRole('link', { name: 'Support Our Work', exact: true })).toHaveCount(0);
+  await page.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true }).click();
+  await expect(page).toHaveURL(/support-our-work.html$/);
+  await expect(page.getByRole('heading', { name: 'Choose your gift.' })).toBeVisible();
   await page.locator('.site-header nav').getByRole('link', { name: 'Home', exact: true }).click();
   await expect(page.locator('.site-header nav').getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('aria-current', 'page');
   await page.getByRole('link', { name: 'BOAN home', exact: true }).click();
@@ -42,7 +44,47 @@ test('programme links and involvement links reach their dedicated content and co
   await expect(page.locator('#contact-topic')).toHaveValue('ambassador');
 });
 
-test('mobile menu closes on navigation and Escape while donation links are paused', async ({ page }) => {
+test('monthly £35 default, review disclosure and single-gift change stay consistent', async ({ page }) => {
+  await page.goto('/support-our-work.html');
+  await expect(page.getByLabel('Monthly donation', { exact: true })).toBeChecked();
+  await expect(page.locator('#gift-summary')).toHaveText('£35 every month');
+  await expect(page.locator('#gift-impact')).toContainText('fitness classes for a month');
+  await page.getByRole('button', { name: 'Review my support' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.locator('#review-amount')).toHaveText('£35 every month');
+  await expect(page.getByRole('dialog')).toContainText('No payment has been taken');
+  await page.keyboard.press('Escape');
+  await page.getByLabel('Single donation', { exact: true }).check();
+  await expect(page.locator('#gift-summary')).toHaveText('£25');
+  await page.getByLabel('£100', { exact: true }).check();
+  await page.getByRole('button', { name: 'Review my support' }).click();
+  await expect(page.locator('#review-amount')).toHaveText('£100');
+  await expect(page.locator('#review-impact')).not.toContainText('fitness classes for a month');
+  await page.getByRole('button', { name: 'Change my choice' }).click();
+  await page.getByLabel('Monthly donation', { exact: true }).check();
+  await expect(page.locator('#gift-summary')).toHaveText('£35 every month');
+});
+
+test('custom gift rejects invalid money, preserves pennies, and carries the right choice to contact', async ({ page }) => {
+  await page.goto('/support-our-work.html');
+  const custom = page.getByLabel('Or enter another amount (£)', { exact: true });
+  for (const bad of ['', '0', '-5', '12.345', 'abc', '1e3']) {
+    await custom.fill(bad || ' ');
+    await page.getByRole('button', { name: 'Review my support' }).click();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+    await expect(page.locator('#donation-error')).toContainText('at least £1');
+  }
+  await custom.fill('12.50');
+  await expect(page.locator('#gift-summary')).toHaveText('£12.50 every month');
+  await expect(page.locator('#preset-amounts input:checked')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Review my support' }).click();
+  await expect(page.locator('#review-amount')).toHaveText('£12.50 every month');
+  await page.getByRole('link', { name: 'Ask about giving' }).click();
+  await expect(page.locator('#contact-topic')).toHaveValue('support');
+  await expect(page.getByLabel('Your message', { exact: true })).toHaveValue('I’m interested in supporting BOAN with a monthly gift of £12.50.');
+});
+
+test('mobile menu closes on navigation and Escape; support remains prominent', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Open menu', exact: true }).click();
@@ -52,7 +94,7 @@ test('mobile menu closes on navigation and Escape while donation links are pause
   await page.locator('.site-header nav').getByRole('link', { name: 'About Us', exact: true }).click();
   await expect(page).toHaveURL(/about-us.html$/);
   await expect(page.locator('.menu-toggle')).toHaveAttribute('aria-expanded', 'false');
-  await expect(page.locator('a[href*="support-our-work"]')).toHaveCount(0);
+  await expect(page.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Open menu', exact: true }).click();
   await page.locator('.site-header nav').getByRole('link', { name: 'Home', exact: true }).click();
   await expect(page).toHaveURL(/index.html$/);
@@ -93,7 +135,7 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
   expect(errors).toEqual([]);
 });
 
-test('downloadable single-file mockup navigates public pages and never sends contact messages', async ({ page, context }) => {
+test('downloadable mockup navigates all pages and donations offline without sending contact messages', async ({ page, context }) => {
   const html = await readFile(resolve('docs/boan-interactive-preview.html'), 'utf8');
   const assetRequests = [];
   page.on('request', request => { if (request.resourceType() !== 'document' && /^https?:/.test(request.url())) assetRequests.push(request.url()); });
@@ -109,16 +151,98 @@ test('downloadable single-file mockup navigates public pages and never sends con
     await site.locator('.site-header nav').getByRole('link', { name: label, exact: true }).click();
     await expect(site.locator('body')).toHaveAttribute('data-page', file);
   }
-  await expect(site.locator('a[href*="support-our-work"]')).toHaveCount(0);
+  await site.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true }).click();
+  await expect(site.locator('#gift-summary')).toHaveText('£35 every month');
+  await site.getByRole('button', { name: 'Review my support' }).click();
+  await site.getByRole('link', { name: 'Ask about giving' }).click();
+  await expect(site.locator('#contact-topic')).toHaveValue('support');
+  await expect(site.getByLabel('Your message', { exact: true })).toHaveValue('I’m interested in supporting BOAN with a monthly gift of £35.');
+  await page.goBack();
+  await expect(site.locator('body')).toHaveAttribute('data-page', 'support-our-work.html');
+  await site.getByLabel('£100', { exact: true }).check();
+  await expect(site.locator('#monthly-impact-description')).toHaveText('Support 10 women to attend one class of their choice each month.');
+  await site.getByLabel('Single donation', { exact: true }).check();
+  await expect(site.locator('#monthly-impact')).not.toBeVisible();
+  await expect(site.locator('#gift-summary')).toHaveText('£25');
+  await site.getByLabel('Monthly donation', { exact: true }).check();
+  await site.getByLabel('£20', { exact: true }).check();
+  await expect(site.locator('#monthly-impact-description')).toHaveText('Support one woman to attend two sessions each month.');
+  await site.getByRole('button', { name: 'Review my support' }).click();
+  await site.getByRole('link', { name: 'Ask about giving' }).click();
   await site.getByLabel('Your name', { exact: true }).fill('Preview User');
   await site.getByLabel('Email address', { exact: true }).fill('preview@example.com');
-  await site.getByLabel('Your message', { exact: true }).fill('This is only an offline preview.');
   await site.getByRole('button', { name: 'Send message', exact: true }).click();
   await expect(site.locator('#contact-result')).toContainText('This preview cannot send messages');
-  await expect(site.getByLabel('Your message', { exact: true })).toHaveValue('This is only an offline preview.');
-  await page.goBack();
-  await expect(site.locator('body')).toHaveAttribute('data-page', 'get-involved.html');
+  await expect(site.getByLabel('Your message', { exact: true })).toHaveValue('I’m interested in supporting BOAN with a monthly gift of £20.');
   expect(assetRequests).toEqual([]);
+});
+
+
+test('mobile giving shortcut reaches the donation choices below the sticky header', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/support-our-work.html');
+  await page.getByRole('link', { name: 'Choose your gift', exact: true }).click();
+  await expect(page).toHaveURL(/#donation-form$/);
+  await expect(page.locator('#donation-form')).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Choose your gift.' })).toBeInViewport();
+});
+
+
+test('monthly amounts update the left-hand impact and review with the correct sessions and beneficiaries', async ({ page }) => {
+  await page.goto('/support-our-work.html');
+  const panel = page.locator('#monthly-impact');
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#preset-amounts input')).toHaveCount(5);
+  await expect(page.getByLabel('£50', { exact: true })).toHaveCount(0);
+  const scenarios = [
+    [10, 'Support one woman to attend one pay-as-you-go session each month.'],
+    [20, 'Support one woman to attend two sessions each month.'],
+    [60, 'Support one woman to attend four reformer Pilates sessions each month — one session a week.'],
+    [100, 'Support 10 women to attend one class of their choice each month.'],
+    [35, 'Support one woman to attend fitness classes for a month.'],
+  ];
+  for (const [amount, description] of scenarios) {
+    await page.getByLabel('£' + amount, { exact: true }).check();
+    await expect(page.locator('#monthly-impact-amount')).toHaveText(`£${amount} a month.`);
+    await expect(page.locator('#monthly-impact-description')).toHaveText(description);
+    await expect(page.locator('#gift-impact')).toHaveText(description);
+    await page.getByRole('button', { name: 'Review my support' }).click();
+    await expect(page.locator('#review-amount')).toHaveText(`£${amount} every month`);
+    await expect(page.locator('#review-impact')).toHaveText(description);
+    await page.getByRole('button', { name: 'Change my choice' }).click();
+  }
+});
+
+test('single gifts hide monthly impact; custom monthly amounts never retain stale benefits', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/support-our-work.html');
+  const panel = page.locator('#monthly-impact');
+  await page.getByLabel('£100', { exact: true }).check();
+  await expect(panel).toContainText('10 women');
+  await page.getByLabel('Single donation', { exact: true }).check();
+  await expect(panel).not.toBeVisible();
+  await expect(page.getByLabel('£50', { exact: true })).toBeVisible();
+  await page.getByLabel('£50', { exact: true }).check();
+  await expect(panel).not.toBeVisible();
+  await page.getByLabel('Monthly donation', { exact: true }).check();
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#monthly-impact-amount')).toHaveText('£100 a month.');
+  const custom = page.getByLabel('Or enter another amount (£)', { exact: true });
+  await custom.fill('60.00');
+  await expect(panel).toContainText('four reformer Pilates sessions');
+  await custom.fill('12.50');
+  await expect(page.locator('#monthly-impact-amount')).toHaveText('£12.50 a month.');
+  await expect(panel).toContainText('Help widen access');
+  await expect(panel).not.toContainText('Pilates');
+  await expect(panel).not.toContainText('10 women');
+  await custom.fill('0');
+  await expect(panel).not.toBeVisible();
+  await page.getByRole('button', { name: 'Review my support' }).click();
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+  await page.getByLabel('£20', { exact: true }).check();
+  await expect(panel).toBeVisible();
+  await expect(page.locator('#monthly-impact-amount')).toHaveText('£20 a month.');
+  await expect(page.locator('#monthly-impact-description')).toHaveText('Support one woman to attend two sessions each month.');
 });
 
 
@@ -130,8 +254,7 @@ test('homepage shows short verbatim testimonials in brand-coloured cards with ac
   const structure = await page.locator('main').evaluate(main => [...main.children].map(section => section.classList[0]));
   expect(structure[0]).toBe('empowerment-hero');
   expect(structure[1]).toBe('testimonials');
-  expect(structure).not.toContain('support-feature');
-  expect(structure.indexOf('faq')).toBe(structure.indexOf('belonging') + 1);
+  expect(structure.indexOf('support-feature')).toBe(structure.indexOf('belonging') + 1);
   const first = page.locator('#testimonial-slide-1');
   const second = page.locator('#testimonial-slide-2');
   await expect(first).toBeVisible();

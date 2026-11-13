@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { readFile, access } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 
 async function fillEnquiry(page) {
   await page.getByLabel('Your name', { exact: true }).fill('Test Visitor');
@@ -88,27 +88,8 @@ test('failed contact submissions preserve the message and allow a retry', async 
   expect(attempts).toBe(2);
 });
 
-test('production and preview exports omit giving and retain temporary redirects for old links', async ({ request }) => {
-  for (const file of ['index.html', 'about-us.html', 'our-programs.html', 'get-involved.html', 'contact-us.html']) {
-    for (const directory of ['dist', 'docs/preview']) {
-      const html = await readFile(`${directory}/${file}`, 'utf8');
-      expect(html.includes('support-our-work.html'), `${directory}/${file} links to giving`).toBe(false);
-      expect(/<form\b[^>]*id="donation-form"/.test(html), `${directory}/${file} contains a donation form`).toBe(false);
-      expect(html.includes('£35'), `${directory}/${file} promotes a monthly gift`).toBe(false);
-    }
-  }
-  await expect(access('dist/support-our-work.html')).rejects.toThrow();
-  await expect(access('docs/preview/support-our-work.html')).rejects.toThrow();
-  const redirects = await readFile('dist/_redirects', 'utf8');
-  for (const path of ['/support-our-work.html', '/support-our-work', '/support-our-work/']) {
-    expect(redirects).toContain(`${path}  `);
-  }
-  expect(redirects).toContain('/contact-us.html?topic=support  302!');
-  expect((await request.get('/_redirects')).status()).toBe(200);
-});
-
 test('every public page uses the original logo favicon, which renders in pink and green', async ({ page }) => {
-  for (const file of ['index.html', 'about-us.html', 'our-programs.html', 'get-involved.html', 'contact-us.html']) {
+  for (const file of ['index.html', 'about-us.html', 'our-programs.html', 'get-involved.html', 'contact-us.html', 'support-our-work.html']) {
     await page.goto('/' + file);
     await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', './favicon.svg');
   }
