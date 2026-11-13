@@ -15,11 +15,11 @@ BOAN-Retreats.png
   1200 x 980 pixels. Original coloured background.
 
 BOAN-Together-We-Rise.png
-  2480 x 2400 pixels. Transparent background.
+  1275 x 1234 pixels. Transparent background.
 
 BOAN-You-Belong-Here.png
   2240 x 1800 pixels. Transparent background.
 
 The four programme files contain their illustrations and backgrounds.
-Together, we rise includes the original lettering, figures, flowers and note.
+Together, we rise includes the lettering, figures and flowers. The small support note has been removed.
 You belong here includes the original wording inside the pink graphic.
