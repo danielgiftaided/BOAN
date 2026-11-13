@@ -1,0 +1,46 @@
+BOAN — EDITABLE ARTWORK FOR CANVA
+
+QUICK START
+
+1. Download and unzip this package.
+2. In Canva, use Upload/Import file on the home screen, or drag the .pptx file onto Canva's home screen.
+3. Import BOAN-Canva-Editable.pptx for all six designs in one six-page file.
+4. Open the imported design. Select a shape to move, resize or recolour it. Select a text box to edit its wording.
+5. Use Position > Layers to select overlapping elements. If Canva groups objects, use Ungroup where available.
+
+For each image's original canvas proportions, import the individual .pptx inside that design's numbered folder instead. The combined file uses one common page size, with the original artwork proportions preserved inside it.
+
+FONTS AND COLOURS
+
+Main lettering: DM Sans Bold.
+Italic lettering: Playfair Display Italic (the website uses weight 500).
+If Canva substitutes a font, reselect these fonts in Canva. Font availability can depend on your account.
+
+Pink: #FF66C4
+Green: #77D200
+Navy: #010A4F
+Blush: #FFE6F5
+Pale green: #E9F7D6
+Cream: #FFFCF8
+
+WHAT IS INCLUDED
+
+- BOAN-Canva-Editable.pptx: six pages with 50 separate native shapes/text objects, including five editable text boxes. No flattened artwork images are used inside this file.
+- Six numbered design folders, each with an individual editable PowerPoint, a complete SVG and a reference PNG.
+- SVG-layers: 29 separate vector component files in total.
+- PNG-layers: the same 29 components as high-resolution transparent PNG files. Coloured background layers are intentionally opaque.
+
+Together, we rise contains no small support note.
+The pink badge retains the wording YOU BELONG HERE.
+
+ALTERNATIVE: UPLOAD THE COMPONENTS SEPARATELY
+
+If a particular shape does not remain separate after Canva imports a PowerPoint, use the numbered files in SVG-layers or PNG-layers. Upload each component individually so Canva treats it as its own element. All components within one folder share the same canvas size and existing positions: align them to the same centre and layer them in numerical order, lowest number at the back.
+
+Each SVG/PNG component is a movable layer. A complete SVG may be treated as a single graphic by Canva; do not rely on ungrouping it. PNG lettering and the outlined text in SVG files are artwork, so use the PowerPoint's native text boxes when you want to change the words.
+
+HOW THIS WAS CHECKED
+
+The artwork was reconstructed from the BOAN website's original shapes and styles, rather than trying to recover layers from the flattened PNG exports. The PowerPoints were opened and rendered with LibreOffice, and their structure checked for native shapes and text. Individual SVG/PNG layers were rendered and visually inspected.
+
+Canva account access is not connected in this workspace, so the final import has not been tested inside your Canva account. The individual component files are included to provide a reliable way to move elements separately if Canva converts a shape during import.
