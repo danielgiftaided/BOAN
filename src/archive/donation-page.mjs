@@ -2,7 +2,7 @@
 import { donationPresets, getMonthlyImpact } from '../content/donation-options.js';
 import { supportCopy } from '../content/approved-copy.mjs';
 import { arrow, flower } from '../site-content.mjs';
-const paragraphs = copy => copy.map(text => `<p>${text}</p>`).join('');
+const paragraphs = (copy, classes = '') => copy.map(text => `<p${classes ? ` class="${classes}"` : ''}>${text}</p>`).join('');
 const breadcrumb = title => `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">${title}</span></nav>`;
 
 const defaultMonthlyImpact = getMonthlyImpact(3500);
