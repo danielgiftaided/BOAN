@@ -38,6 +38,17 @@ The homepage programme artwork is the link to the corresponding `our-programs.ht
 
 The six BOAN PNGs are stored in `public/images/`. The four programme images retain their supplied artwork. Together, we rise and You belong here use transparent PNG backgrounds so the homepage section colours show through around the artwork; foreground lettering and white artwork details remain intact. The four programme images appear on both the homepage and their matching programme sections. Square layouts and `object-fit: contain` preserve the complete artwork and its wording. Intrinsic dimensions reserve space; the hero image has high fetch priority, and lower-page images load lazily. All six images are embedded in the standalone exports.
 
+## Page header photos
+
+The About Us, Get Involved, Our Programmes and Join our community introductions use the four requested photos from BOAN’s uploaded ZIP. Their original JPEGs are stored in `public/images/page-headers/` under their supplied filenames. CSS opacity and blush gradients create the fade without modifying the source photos; mobile crops and a lighter mobile fade keep the wording readable. These decorative images are hidden from assistive technology and included in the offline exports.
+
+| Page | Supplied photo |
+| --- | --- |
+| About Us | Dead Good Legacies |
+| Get Involved | LinkedIn Sales Solutions |
+| Our Programmes | Jessica Streser |
+| Join our community | Land O’Lakes |
+
 ## Netlify deployment
 
 `netlify.toml` configures Node.js 24, `npm run build` and the `dist` publish directory. The production branch is `main`. Merge the approved PR and let the connected Netlify project build it. If the project uses manual uploads, build locally and upload the **contents of `dist`**, including the `assets` folder.
