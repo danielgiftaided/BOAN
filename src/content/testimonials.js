@@ -21,4 +21,20 @@ export const testimonials = [
       `I honestly cannot imagine not attending now. This is definitely something I intend to continue for life! 🩷`,
     ],
   },
+  {
+    name: 'Amina Potts',
+    excerpt: `The workouts have given me a massive confidence boost, and I’ve felt a huge, positive difference in my health and overall fitness.`,
+    colour: 'pink',
+    paragraphs: [
+      `Before finding SNB Hive, I really struggled to find women-only classes that could help me stay consistent with my fitness journey. Since joining, I’ve tried everything from Pilates and Boxfit to Zumba, and every single class has been incredible for keeping me strong and motivated. I genuinely look forward to attending, and I’ve built some amazing new friendships with the other women here. Everyone is just so warm and welcoming. The workouts have given me a massive confidence boost, and I’ve felt a huge, positive difference in my health and overall fitness. A huge shout out to Shams for organising this much needed community for us busy mums!`,
+    ],
+  },
+  {
+    name: "Nicola O'Connor",
+    excerpt: `The ladies I teach bring so much joy`,
+    colour: 'green',
+    paragraphs: [
+      `I have been teaching my Zumba classes on Fridays and I can genuinely say that its my favorite class to teach. The ladies I teach bring so much joy and make me want to teacher at my best`,
+    ],
+  },
 ];

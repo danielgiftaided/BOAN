@@ -94,7 +94,7 @@ The separate `gh-pages` branch contains a design-preview package with `BOAN-inte
 
 ## Testimonials and branding
 
-Original supplied stories and short, verbatim excerpts are stored in `src/content/testimonials.js`. Gemma Jermaine and Mary J appear in pink and green cards, with previous/next buttons, direct selectors, keyboard arrows/Home/End, touch swipes and screen-reader status. There is no automatic rotation. Header/footer branding and the favicon preserve the original logo geometry. The homepage retains the three-line headline “Feel supported. Grow stronger. Thrive together.” and the description “For the woman you are and the woman you’re becoming.”
+Original supplied stories and short, verbatim excerpts are stored in `src/content/testimonials.js`. Gemma Jermaine, Mary J, Amina Potts and Nicola O’Connor appear in alternating pink and green cards, with previous/next buttons, four direct selectors, keyboard arrows/Home/End, touch swipes and screen-reader status. There is no automatic rotation. Header/footer branding and the favicon preserve the original logo geometry. The homepage retains the three-line headline “Feel supported. Grow stronger. Thrive together.” and the description “For the woman you are and the woman you’re becoming.”
 
 ## Browser checks
 
