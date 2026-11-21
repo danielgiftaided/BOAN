@@ -13,18 +13,27 @@ npm run dev -- --port 3000
 
 ## Pages and editing
 
-The public website has six dedicated HTML pages:
+The public website has seven dedicated HTML pages:
 
 - `index.html` — empowerment hero, testimonials, mission, programmes, community invitation, support feature and FAQ.
 - `about-us.html` — organisation story, vision and mission.
 - `our-programs.html` — Movement, Workshops, Creative and Retreats.
+- `join-community.html` — the supplied community introduction, programme options, access/funding information, three joining steps, FAQs and Contact Us link.
 - `get-involved.html` — volunteering, partnerships, ambassador opportunities and support.
 - `contact-us.html` — enquiry form, giving link and a direct link to `hello@boan.uk`.
 - `support-our-work.html` — single/monthly giving preview and donation impact summaries.
 
-Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the six root HTML files, including before development and production builds. Keep these generated HTML files committed.
+Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, community copy in `src/pages/join-community.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the seven root HTML files, including before development and production builds. Keep these generated HTML files committed.
 
 `public/favicon.svg` embeds the original logo silhouette and renders it in the same green and pink as the header, with a light background so it stays legible on dark browser tabs. The icon is linked on every page and included inline in the offline previews.
+
+## Community page and programme image links
+
+“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, two disabled **Register Your Interest** buttons with no destination or submission handler, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. No interest-registration form or data collection has been added. The supplied Privacy Policy reference remains plain text because no policy URL was provided.
+
+The homepage programme artwork is the link to the corresponding `our-programs.html#movement`, `#workshops`, `#creative` or `#retreats` section. Each image link has a descriptive accessible name, with no separate “Explore…” text link under the card. The general **See Our Programs** link remains. The main navigation switches to the menu at 1200px so the extra tab fits without crowding.
+
+The six supplied PNGs are stored unchanged in `public/images/`. Together, we rise and You belong here replace the homepage’s former CSS/SVG compositions. The four programme images appear on both the homepage and their matching programme sections. Square layouts and `object-fit: contain` preserve the complete artwork and its wording. Intrinsic dimensions reserve space; the hero image has high fetch priority, and lower-page images load lazily. All six images are embedded in the standalone exports.
 
 ## Netlify deployment
 
@@ -65,7 +74,7 @@ npm run preview:standalone
 
 Production output is in `dist/`. Relative asset URLs also support deployments at a subpath.
 
-The standalone command produces six individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, retain the giving preview, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
+The standalone command produces seven individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, retain the giving preview, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
 
 The separate `gh-pages` branch contains a design-preview package with `BOAN-interactive-mockup.html`. Source PRs do not automatically update that branch. Production Netlify deployments should use `dist`, not the offline mockup.
 
@@ -82,4 +91,4 @@ npm run test:e2e
 
 Playwright uses `/usr/bin/chromium` when present. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for another browser, or install the matching Playwright Chromium browser in your development environment.
 
-The suite checks six-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, monthly/single/custom donation choices, impact wording and review, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.
+The suite checks seven-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, monthly/single/custom donation choices, impact wording and review, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.
