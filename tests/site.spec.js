@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { testimonials } from '../src/content/testimonials.js';
-const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
+const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Join our community', 'join-community.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
 const files = [...links.map(([, file]) => file), 'support-our-work.html'];
 
 test('header links open distinct, reloadable pages with current-page state', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.site-header nav a')).toHaveCount(5);
+  await expect(page.locator('.site-header nav a')).toHaveCount(6);
   for (const [label, file] of links) {
     await page.locator('.site-header nav').getByRole('link', { name: label, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`${file}$`));
@@ -106,7 +106,7 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
   page.on('pageerror', error => errors.push(error.message));
   const targets = new Set();
   for (const file of files) {
-    for (const width of [320, 768, 1440]) {
+    for (const width of [320, 768, 1024, 1200, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.goto('/' + file);
       await page.evaluate(() => document.fonts.ready);

@@ -26,7 +26,7 @@ document.addEventListener('keydown', event => {
     menu.focus();
   }
 });
-matchMedia('(min-width: 1001px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
+matchMedia('(min-width: 1201px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
 
 document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', () => {
   const target = document.getElementById(link.hash.slice(1));

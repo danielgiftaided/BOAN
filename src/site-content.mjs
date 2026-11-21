@@ -10,6 +10,7 @@ export const navigation = [
   ['index.html', 'Home'],
   ['about-us.html', 'About Us'],
   ['our-programs.html', 'Our Programs'],
+  ['join-community.html', 'Join our community'],
   ['get-involved.html', 'Get Involved'],
   ['contact-us.html', 'Contact Us'],
 ];
@@ -25,7 +26,7 @@ const programmes = [
   {id:'creative', title:'Creative', caption:'Make something. Find connection.', description:'Painting, flower arranging, crocheting, knitting and hands-on experiences to explore new interests and build friendships.', detail:programmeCopy.creative, topic:'creative', art:'<div class="orange-art"><i></i><i></i><i></i><i></i></div>'},
   {id:'retreats', title:'Retreats', caption:'Make space for yourself.', description:'Thoughtfully curated wellbeing experiences to recharge, reflect and restore balance through movement, nature and connection.', detail:programmeCopy.retreats, topic:'retreats', art:'<div class="sun-art"><i></i><b></b></div>'},
 ];
-const programmeCards = programmes.map((p,i) => `<article class="programme-card ${p.id}"><div class="card-art" aria-hidden="true">${p.art}</div><div class="card-body"><h3>${p.title}</h3><p>${p.description}</p>${link(`our-programs.html#${p.id}`, `Explore ${p.title.toLowerCase()}`, 'text-link')}</div></article>`).join('');
+const programmeCards = programmes.map(p => `<article class="programme-card ${p.id}"><a class="programme-image-link" href="our-programs.html#${p.id}" aria-label="Explore ${p.title.toLowerCase()}"><div class="card-art" aria-hidden="true">${p.art}</div></a><div class="card-body"><h3>${p.title}</h3><p>${p.description}</p></div></article>`).join('');
 
 const escapeText = text => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const carouselArrow = '<svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h16M13 5l7 7-7 7"/></svg>';
@@ -75,10 +76,13 @@ const support = `<section class="giving-hero section">${breadcrumb('Support Our 
 <section class="faq section"><div><h2>A little more<br><em>about your support.</em></h2></div><div class="questions"><details><summary>What can £35 a month support?<span>+</span></summary><p>For £35 a month, you can support a woman to attend fitness classes for a month. It helps remove a financial barrier so she can take part in movement and connect with the community.</p></details><details><summary>Can I make a single donation instead?<span>+</span></summary><p>Yes. Choose “Single donation” above to explore a one-off amount. Both single and monthly support will help BOAN widen access to its work when online giving opens.</p></details><details><summary>Can I donate online now?<span>+</span></summary><p>Not yet. This is a preview of the donation page. You can explore amounts and review your choice, but no payment details are collected, no money is taken and no monthly donation is set up.</p></details><details><summary>Can my organisation help?<span>+</span></summary><p>We welcome conversations about funding, sponsorship, venues, expertise and other practical support. Visit <a href="contact-us.html?topic=partnerships">Contact Us</a> to explore a partnership.</p></details></div></section>
 <dialog id="donation-review" aria-labelledby="review-title"><button class="close" data-close-review aria-label="Close donation review">×</button><h2 id="review-title">A little giving.<br><em>More possibility.</em></h2><p id="review-amount" class="review-amount"></p><p id="review-impact"></p><p class="preview-note">This is a preview of your choice. No payment has been taken and no recurring donation has been set up.</p><div class="review-actions"><button class="button outline" data-close-review type="button">Change my choice</button><a class="button lime" id="giving-contact" href="contact-us.html?topic=support">Ask about giving ${arrow}</a></div></dialog>`;
 
+const community = readFileSync(new URL('./pages/join-community.html', import.meta.url), 'utf8');
+
 export const pages = [
   {file:'index.html', title:'Feel supported. Grow stronger. Thrive together.', description:'A women-only community for movement, wellbeing and meaningful connection. Explore BOAN, get involved or support another woman’s access to fitness.', content:home},
   {file:'about-us.html', title:'About Us', description:'Meet Builders Of A Nation, a female-only CIC working to widen access to wellbeing, movement and community.', content:about},
   {file:'our-programs.html', title:'Our Programmes', description:'Explore movement, workshops, creative activities and retreats with BOAN.', content:programs},
+  {file:'join-community.html', title:'Join our community', description:'Find your way into the BOAN community. Explore wellbeing opportunities, financial support and how to take your first step in Hackney.', content:community},
   {file:'get-involved.html', title:'Get Involved', description:'Volunteer, partner with BOAN or become an ambassador to help women and communities thrive.', content:involved},
   {file:'contact-us.html', title:'Contact Us', description:'Start a conversation with BOAN about programmes, participation, volunteering, partnerships or supporting our work.', content:contact},
   {file:'support-our-work.html', title:'Support Our Work', description:'Explore single and monthly donations to BOAN. For £35 a month, support a woman to attend fitness classes for a month.', content:support},

@@ -89,7 +89,7 @@ test('failed contact submissions preserve the message and allow a retry', async 
 });
 
 test('every public page uses the original logo favicon, which renders in pink and green', async ({ page }) => {
-  for (const file of ['index.html', 'about-us.html', 'our-programs.html', 'get-involved.html', 'contact-us.html', 'support-our-work.html']) {
+  for (const file of ['index.html', 'about-us.html', 'our-programs.html', 'join-community.html', 'get-involved.html', 'contact-us.html', 'support-our-work.html']) {
     await page.goto('/' + file);
     await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', './favicon.svg');
   }
