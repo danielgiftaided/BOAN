@@ -36,7 +36,7 @@ The policy retains all 15 sections of BOAN’s supplied wording, with semantic h
 
 The homepage programme artwork is the link to the corresponding `our-programs.html#movement`, `#workshops`, `#creative` or `#retreats` section. Each image link has a descriptive accessible name, with no separate “Explore…” text link under the card. The general **See Our Programs** link remains. The main navigation switches to the menu at 1200px so the extra tab fits without crowding.
 
-The six supplied PNGs are stored unchanged in `public/images/`. Together, we rise and You belong here replace the homepage’s former CSS/SVG compositions. The four programme images appear on both the homepage and their matching programme sections. Square layouts and `object-fit: contain` preserve the complete artwork and its wording. Intrinsic dimensions reserve space; the hero image has high fetch priority, and lower-page images load lazily. All six images are embedded in the standalone exports.
+The six BOAN PNGs are stored in `public/images/`. The four programme images retain their supplied artwork. Together, we rise and You belong here use transparent PNG backgrounds so the homepage section colours show through around the artwork; foreground lettering and white artwork details remain intact. The four programme images appear on both the homepage and their matching programme sections. Square layouts and `object-fit: contain` preserve the complete artwork and its wording. Intrinsic dimensions reserve space; the hero image has high fetch priority, and lower-page images load lazily. All six images are embedded in the standalone exports.
 
 ## Netlify deployment
 
