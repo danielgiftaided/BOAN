@@ -9,11 +9,48 @@ test('each homepage programme image links to its exact section without a duplica
     const imageLink = card.getByRole('link', { name: `Explore ${id}`, exact: true });
     await expect(imageLink).toHaveAttribute('href', `our-programs.html#${id}`);
     await expect(imageLink.locator('.card-art')).toBeVisible();
+    await expect(imageLink.locator('img')).toHaveAttribute('src', `./images/programme-${id}.png`);
     await imageLink.focus();
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(new RegExp(`our-programs.html#${id}$`));
     await expect(page.locator(`#${id}`)).toBeInViewport();
     await expect(page.locator(`.program-jumps a[href="#${id}"]`)).toHaveAttribute('aria-current', 'location');
+  }
+});
+
+test('supplied homepage and programme artwork loads completely without cropping on mobile and desktop', async ({ page }) => {
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/');
+    await expect(page.locator('.empowerment-hero img')).toHaveAttribute('alt', 'Together, we rise.');
+    await expect(page.locator('.belonging-art img')).toHaveAttribute('alt', 'You belong here.');
+    await expect(page.locator('.art-note, .art-arch, .rising-shapes')).toHaveCount(0);
+    const images = page.locator('.empowerment-hero img, .programme-card img, .belonging-art img');
+    await expect(images).toHaveCount(6);
+    for (const image of await images.all()) {
+      await image.scrollIntoViewIfNeeded();
+      await expect.poll(() => image.evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
+      await expect(image).toHaveCSS('object-fit', 'contain');
+      const ratio = await image.evaluate(node => {
+        const box = node.getBoundingClientRect();
+        return { actual: box.width / box.height, original: node.naturalWidth / node.naturalHeight };
+      });
+      expect(ratio.actual).toBeCloseTo(ratio.original, 2);
+    }
+    await page.goto('/our-programs.html');
+    await expect(page.locator('.program-detail img')).toHaveCount(4);
+    for (const id of ['movement', 'workshops', 'creative', 'retreats']) {
+      const image = page.locator(`#${id} img`);
+      await expect(image).toHaveAttribute('src', `./images/programme-${id}.png`);
+      await image.scrollIntoViewIfNeeded();
+      await expect.poll(() => image.evaluate(node => node.complete && node.naturalWidth > 0)).toBe(true);
+      await expect(image).toHaveCSS('object-fit', 'contain');
+      const ratio = await image.evaluate(node => {
+        const box = node.getBoundingClientRect();
+        return { actual: box.width / box.height, original: node.naturalWidth / node.naturalHeight };
+      });
+      expect(ratio.actual).toBeCloseTo(ratio.original, 2);
+    }
   }
 });
 

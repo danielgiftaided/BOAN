@@ -33,6 +33,8 @@ Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout
 
 The homepage programme artwork is the link to the corresponding `our-programs.html#movement`, `#workshops`, `#creative` or `#retreats` section. Each image link has a descriptive accessible name, with no separate “Explore…” text link under the card. The general **See Our Programs** link remains. The main navigation switches to the menu at 1200px so the extra tab fits without crowding.
 
+The six supplied PNGs are stored unchanged in `public/images/`. Together, we rise and You belong here replace the homepage’s former CSS/SVG compositions. The four programme images appear on both the homepage and their matching programme sections. Square layouts and `object-fit: contain` preserve the complete artwork and its wording. Intrinsic dimensions reserve space; the hero image has high fetch priority, and lower-page images load lazily. All six images are embedded in the standalone exports.
+
 ## Netlify deployment
 
 `netlify.toml` configures Node.js 24, `npm run build` and the `dist` publish directory. The production branch is `main`. Merge the approved PR and let the connected Netlify project build it. If the project uses manual uploads, build locally and upload the **contents of `dist`**, including the `assets` folder.
