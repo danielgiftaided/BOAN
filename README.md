@@ -13,7 +13,7 @@ npm run dev -- --port 3000
 
 ## Pages and editing
 
-The public website has seven dedicated HTML pages:
+The public website has eight dedicated HTML pages:
 
 - `index.html` — empowerment hero, testimonials, mission, programmes, community invitation, support feature and FAQ.
 - `about-us.html` — organisation story, vision and mission.
@@ -22,14 +22,17 @@ The public website has seven dedicated HTML pages:
 - `get-involved.html` — volunteering, partnerships, ambassador opportunities and support.
 - `contact-us.html` — enquiry form, giving link and a direct link to `hello@boan.uk`.
 - `support-our-work.html` — single/monthly giving preview and donation impact summaries.
+- `privacy-policy.html` — the supplied privacy policy, reached through the bottom footer link on every page.
 
-Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, community copy in `src/pages/join-community.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the seven root HTML files, including before development and production builds. Keep these generated HTML files committed.
+Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, community copy in `src/pages/join-community.html`, privacy policy in `src/pages/privacy-policy.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the eight root HTML files, including before development and production builds. Keep these generated HTML files committed.
 
 `public/favicon.svg` embeds the original logo silhouette and renders it in the same green and pink as the header, with a light background so it stays legible on dark browser tabs. The icon is linked on every page and included inline in the offline previews.
 
 ## Community page and programme image links
 
-“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, two disabled **Register Your Interest** buttons with no destination or submission handler, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. No interest-registration form or data collection has been added. The supplied Privacy Policy reference remains plain text because no policy URL was provided.
+“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, two disabled **Register Your Interest** buttons with no destination or submission handler, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. No interest-registration form or data collection has been added. The Privacy Policy is available through the shared footer.
+
+The policy retains all 15 sections of BOAN’s supplied wording, with semantic headings, lists and email/website links. As requested, square-bracketed editorial notes and placeholders have been removed. The unfinished correspondence-address line is omitted and **Last updated** is **21 November 2026**. The policy appears in the footer only, with no additional header tab.
 
 The homepage programme artwork is the link to the corresponding `our-programs.html#movement`, `#workshops`, `#creative` or `#retreats` section. Each image link has a descriptive accessible name, with no separate “Explore…” text link under the card. The general **See Our Programs** link remains. The main navigation switches to the menu at 1200px so the extra tab fits without crowding.
 
@@ -74,7 +77,7 @@ npm run preview:standalone
 
 Production output is in `dist/`. Relative asset URLs also support deployments at a subpath.
 
-The standalone command produces seven individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, retain the giving preview, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
+The standalone command produces eight individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, retain the giving preview, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
 
 The separate `gh-pages` branch contains a design-preview package with `BOAN-interactive-mockup.html`. Source PRs do not automatically update that branch. Production Netlify deployments should use `dist`, not the offline mockup.
 
@@ -91,4 +94,4 @@ npm run test:e2e
 
 Playwright uses `/usr/bin/chromium` when present. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for another browser, or install the matching Playwright Chromium browser in your development environment.
 
-The suite checks seven-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, monthly/single/custom donation choices, impact wording and review, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.
+The suite checks eight-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, monthly/single/custom donation choices, impact wording and review, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.

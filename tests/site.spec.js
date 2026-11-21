@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { testimonials } from '../src/content/testimonials.js';
 const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Join our community', 'join-community.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
-const files = [...links.map(([, file]) => file), 'support-our-work.html'];
+const files = [...links.map(([, file]) => file), 'support-our-work.html', 'privacy-policy.html'];
 
 test('header links open distinct, reloadable pages with current-page state', async ({ page }) => {
   await page.goto('/');
@@ -121,6 +121,8 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
       }
     }
     await expect(page.locator('.hero-reassurance, .eyebrow, .card-number, .art-caption, .art-overline, .art-bottom, .announcement, .brand-name')).toHaveCount(0);
+    await expect(page.locator('footer').getByRole('link', { name: 'Privacy Policy', exact: true })).toHaveAttribute('href', 'privacy-policy.html');
+    await expect(page.locator('#main-nav').getByRole('link', { name: 'Privacy Policy', exact: true })).toHaveCount(0);
     for (const selector of ['.site-header .brand-mark', '.footer-top .brand-mark']) {
       const background = await page.locator(selector).evaluate(element => getComputedStyle(element).backgroundImage);
       expect(background).toContain('rgb(119, 210, 0)');
@@ -151,6 +153,12 @@ test('downloadable mockup navigates all pages and donations offline without send
     await site.locator('.site-header nav').getByRole('link', { name: label, exact: true }).click();
     await expect(site.locator('body')).toHaveAttribute('data-page', file);
   }
+  await site.locator('footer').getByRole('link', { name: 'Privacy Policy', exact: true }).click();
+  await expect(site.locator('body')).toHaveAttribute('data-page', 'privacy-policy.html');
+  await expect(site.getByRole('heading', { level: 1, name: 'Privacy Policy', exact: true })).toBeVisible();
+  await expect(site.locator('.policy-updated')).toHaveText('Last updated: 21 November 2026');
+  await expect(site.locator('.privacy-policy')).not.toContainText('[');
+  await expect(site.getByRole('heading', { name: '15. Changes to this policy', exact: true })).toHaveCount(1);
   await site.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true }).click();
   await expect(site.locator('#gift-summary')).toHaveText('£35 every month');
   await site.getByRole('button', { name: 'Review my support' }).click();
