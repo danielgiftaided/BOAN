@@ -18,7 +18,11 @@ const link = (url, text, classes = 'button lime') => `<a class="${classes}" href
 const contactLink = (topic, label, classes) => link(`contact-us.html?topic=${topic}`, label, classes);
 const breadcrumb = title => `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span aria-current="page">${title}</span></nav>`;
 const paragraphs = (copy, classes = '') => copy.map(text => `<p${classes ? ` class="${classes}"` : ''}>${text}</p>`).join('');
-const intro = (label, title, description, name) => `<section class="page-intro section">${breadcrumb(name)}<h1>${title}</h1>${paragraphs(Array.isArray(description) ? description : [description], 'page-description')}</section>`;
+const introPhoto = (file, width, height) => `<img class="page-intro-photo" src="/images/page-headers/${file}" alt="" aria-hidden="true" width="${width}" height="${height}" fetchpriority="high" decoding="async"/>`;
+const intro = (label, title, description, name, photo = '') => {
+  const content = `${breadcrumb(name)}<h1>${title}</h1>${paragraphs(Array.isArray(description) ? description : [description], 'page-description')}`;
+  return `<section class="page-intro section${photo ? ' page-intro--photo' : ''}">${photo ? `${photo}<div class="page-intro-content">${content}</div>` : content}</section>`;
+};
 const supportFeature = `<section class="support-feature section"><div class="support-number"><strong>£35<span>/ month</span></strong><span class="support-number-caption">A little support.<br><em>A stronger start.</em></span></div><div><h2>Your support.<br><em>Her next step.</em></h2><p>For £35 a month, you can support a woman to attend fitness classes for a month. Help remove a financial barrier and create space for confidence, connection and wellbeing.</p>${link('support-our-work.html', 'Support Our Work')}</div></section>`;
 const programmeArtwork = (id, alt) => `<img class="programme-artwork" src="/images/programme-${id}.png" alt="${alt}" width="2000" height="2000" loading="lazy" decoding="async"/>`;
 const programmes = [
@@ -41,19 +45,19 @@ ${testimonialCarousel}
 ${supportFeature}
 <section class="faq section"><div><h2>A few questions.<br><em>A warm welcome.</em></h2></div><div class="questions"><details><summary>Who is BOAN for?<span>+</span></summary><p>BOAN is a female-only community interest company for women from different backgrounds, ages and stages of life. We particularly want to reach women who face barriers to mainstream wellbeing and community spaces.</p></details><details><summary>Do I need any experience?<span>+</span></summary><p>No perfect starting point is needed. Explore <a href="our-programs.html">Our Programs</a> to see what interests you, or visit <a href="contact-us.html">Contact Us</a> to tell us what would help you feel welcome.</p></details><details><summary>How can I help another woman take part?<span>+</span></summary><p>A monthly gift of £35 can support a woman to attend fitness classes for a month. You can explore single and monthly giving on our <a href="support-our-work.html">Support Our Work</a> page.</p></details></div></section>`;
 
-const about = intro('ABOUT US','Women supporting women.<br><em>Stronger together.</em>',aboutCopy[0],'About Us') + `
+const about = intro('ABOUT US','Women supporting women.<br><em>Stronger together.</em>',aboutCopy[0],'About Us',introPhoto('dead-good-legacies-VBYl6cBAPsA-unsplash.jpg',5483,3084)) + `
 <section class="story-section section"><div><h2>A place to belong.<br><em>A future to build.</em></h2></div><div class="prose">${paragraphs(aboutCopy.slice(1, 4))}</div></section>
 <section class="community-statement section" aria-label="Our vision"><div class="prose">${paragraphs([aboutCopy[4]])}</div></section>
 <section class="mission-section story-section section"><div><h2>Our Mission</h2></div><div class="prose">${paragraphs(missionCopy)}</div></section>
 <section class="page-cta section"><h2>Let’s build<br><em>what comes next.</em></h2><div class="cta-actions">${link('our-programs.html','Explore Our Programmes')}${link('get-involved.html','Get Involved','button outline')}</div></section>`;
 
-const programs = intro('EXPERIENCES THAT HELP WOMEN THRIVE.','Our Programmes',programmeIntro,'Our Programmes') + `
+const programs = intro('EXPERIENCES THAT HELP WOMEN THRIVE.','Our Programmes',programmeIntro,'Our Programmes',introPhoto('jessica-streser-5ai6kpW4NOw-unsplash.jpg',6000,3376)) + `
 <nav class="program-jumps" aria-label="Explore programmes">${programmes.map(p=>`<a href="#${p.id}">${p.title}${arrow}</a>`).join('')}</nav>
 ${programmes.map((p,i)=>`<section class="program-detail section ${p.id}" id="${p.id}" tabindex="-1"><div class="card-art programme-art">${p.art}</div><div><h2>${p.title}</h2>${paragraphs(p.detail, 'detail-description')}${contactLink(p.topic, `Ask about ${p.title.toLowerCase()}`)}</div></section>`).join('')}
 <section class="programme-purpose section"><div class="prose">${paragraphs([programmeClosing])}</div></section>
 <section class="page-cta section"><h2>What would help<br><em>you take part?</em></h2><p>Programme details, dates and availability will be shared as activities are confirmed. Let us know what interests you and what would make it easier to join in.</p>${link('contact-us.html','Start a conversation')}</section>`;
 
-const involved = intro('YOUR TIME. YOUR IDEAS. YOUR IMPACT.','Get Involved',involvementIntro,'Get Involved') + `
+const involved = intro('YOUR TIME. YOUR IDEAS. YOUR IMPACT.','Get Involved',involvementIntro,'Get Involved',introPhoto('linkedin-sales-solutions-IjkIOe-2fF4-unsplash.jpg',5760,3840)) + `
 <section class="involvement-grid section">${involvementCopy.map((role, i) => `<article><h2>${role.title}</h2><p>${role.text}</p>${contactLink(role.topic,role.action,'text-link')}</article>`).join('')}</section>
 ${supportFeature}
 <section class="page-cta section"><h2>Your next step<br><em>can be a conversation.</em></h2><p>Tell us how you’d like to get involved and what matters to you. We’re building this community together.</p><div class="cta-actions">${link('contact-us.html','Contact Us')}${link('our-programs.html','Explore Our Programmes','button outline')}</div></section>`;

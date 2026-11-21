@@ -65,3 +65,14 @@
 .policy-section ul{padding-left:24px}
 .policy-section li+li{margin-top:10px}
 @media(max-width:560px){.footer-bottom{align-items:flex-start}.privacy-content p,.privacy-content li{font-size:15px}}
+
+/* Decorative header photos fade into BOAN's blush background. */
+.page-intro--photo{position:relative;isolation:isolate;overflow:hidden;min-height:420px}
+.page-intro--photo .page-intro-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--intro-photo-position,50% 50%);opacity:.38;pointer-events:none;z-index:-2}
+.page-intro--photo:after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,#ffe6f5eb 0%,#ffe6f59e 45%,#ffe6f51a 100%),linear-gradient(0deg,var(--blush),#ffe6f500 45%)}
+.page-intro-content{position:relative}
+body[data-page="about-us.html"] .page-intro--photo{--intro-photo-position:50% 55%}
+body[data-page="get-involved.html"] .page-intro--photo{--intro-photo-position:50% 38%}
+body[data-page="our-programs.html"] .page-intro--photo{--intro-photo-position:50% 55%}
+body[data-page="join-community.html"] .page-intro--photo{--intro-photo-position:40% 42%}
+@media(max-width:700px){.page-intro--photo .page-intro-photo{opacity:.26}.page-intro--photo:after{background:linear-gradient(0deg,var(--blush),#ffe6f533 75%)}body[data-page="our-programs.html"] .page-intro--photo{--intro-photo-position:43% 50%}}

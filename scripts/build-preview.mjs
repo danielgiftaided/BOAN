@@ -6,7 +6,7 @@ import { pages } from '../src/site-content.mjs';
 // same pages. Both versions include their own fonts, artwork and JavaScript.
 const root = resolve(import.meta.dirname, '..');
 const dist = resolve(root, 'dist');
-const types = { '.png': 'image/png', '.svg': 'image/svg+xml', '.woff': 'font/woff', '.woff2': 'font/woff2' };
+const types = { '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff': 'font/woff', '.woff2': 'font/woff2' };
 function assetPath(asset, from) {
   const path = asset.startsWith('/') ? resolve(dist, asset.slice(1)) : resolve(dirname(from), asset);
   if (!path.startsWith(dist + '/')) throw new Error('Asset outside dist');
