@@ -141,20 +141,14 @@ if (testimonialCarousel) {
   const dots = [...testimonialCarousel.querySelectorAll('[data-testimonial-index]')];
   const status = testimonialCarousel.querySelector('.testimonial-status');
   const stage = testimonialCarousel.querySelector('.testimonial-slides');
-  const rotationButton = testimonialCarousel.querySelector('[data-testimonial-rotation]');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const rotationDelay = 8000;
+  const rotationDelay = 5000;
   let selected = 0;
-  let isPlaying = !reducedMotion.matches;
-  let isHovered = false;
   let rotationTimer;
 
   function updateRotation() {
     window.clearTimeout(rotationTimer);
-    rotationButton.textContent = isPlaying ? 'Pause testimonials' : 'Play testimonials';
-    // Automatic updates should not repeatedly interrupt screen-reader users.
-    status.setAttribute('aria-live', isPlaying ? 'off' : 'polite');
-    if (isPlaying && !isHovered && !document.hidden) {
+    if (!reducedMotion.matches && !document.hidden) {
       rotationTimer = window.setTimeout(() => {
         showTestimonial(selected + 1);
         updateRotation();
@@ -162,49 +156,29 @@ if (testimonialCarousel) {
     }
   }
 
-  function showTestimonial(index) {
+  function showTestimonial(index, announce = false) {
     selected = (index + slides.length) % slides.length;
     slides.forEach((slide, i) => { slide.hidden = i !== selected; });
     dots.forEach((dot, i) => {
       if (i === selected) dot.setAttribute('aria-current', 'true');
       else dot.removeAttribute('aria-current');
     });
+    // Announce a visitor's selection without announcing every automatic update.
+    status.setAttribute('aria-live', announce ? 'polite' : 'off');
     status.textContent = `${selected + 1} of ${slides.length} — ${slides[selected].dataset.author}`;
   }
 
   function selectTestimonial(index) {
-    isPlaying = false;
+    showTestimonial(index, true);
     updateRotation();
-    showTestimonial(index);
   }
 
-  rotationButton.hidden = false;
-  rotationButton.addEventListener('click', () => {
-    isPlaying = !isPlaying;
+  function updateAvailability() {
+    status.setAttribute('aria-live', reducedMotion.matches || document.hidden ? 'polite' : 'off');
     updateRotation();
-  });
-  testimonialCarousel.addEventListener('mouseenter', () => {
-    isHovered = true;
-    updateRotation();
-  });
-  testimonialCarousel.addEventListener('mouseleave', () => {
-    isHovered = false;
-    updateRotation();
-  });
-  testimonialCarousel.addEventListener('focusin', event => {
-    // Leave the rotation button's current action intact until it is activated.
-    if (event.target !== rotationButton) {
-      isPlaying = false;
-      updateRotation();
-    }
-  });
-  document.addEventListener('visibilitychange', updateRotation);
-  reducedMotion.addEventListener('change', event => {
-    if (event.matches) {
-      isPlaying = false;
-      updateRotation();
-    }
-  });
+  }
+  document.addEventListener('visibilitychange', updateAvailability);
+  reducedMotion.addEventListener('change', updateAvailability);
   testimonialCarousel.querySelectorAll('[data-testimonial-step]').forEach(button => {
     button.addEventListener('click', () => selectTestimonial(selected + Number(button.dataset.testimonialStep)));
   });
@@ -219,10 +193,6 @@ if (testimonialCarousel) {
   let touchStart = null;
   stage.addEventListener('pointerdown', event => {
     touchStart = event.pointerType === 'touch' ? { x: event.clientX, y: event.clientY } : null;
-    if (touchStart) {
-      isPlaying = false;
-      updateRotation();
-    }
   });
   stage.addEventListener('pointerup', event => {
     if (!touchStart || event.pointerType !== 'touch') return;
@@ -232,5 +202,5 @@ if (testimonialCarousel) {
     if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.5) selectTestimonial(selected + (dx < 0 ? 1 : -1));
   });
   stage.addEventListener('pointercancel', () => { touchStart = null; });
-  updateRotation();
+  updateAvailability();
 }

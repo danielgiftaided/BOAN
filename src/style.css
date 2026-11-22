@@ -77,11 +77,7 @@ body[data-page="our-programs.html"] .page-intro--photo{--intro-photo-position:50
 body[data-page="join-community.html"] .page-intro--photo{--intro-photo-position:40% 42%}
 @media(max-width:700px){.page-intro--photo .page-intro-photo{opacity:.26}.page-intro--photo:after{background:linear-gradient(0deg,var(--blush),#ffe6f533 75%)}body[data-page="our-programs.html"] .page-intro--photo{--intro-photo-position:43% 50%}}
 
-/* Rotation controls and a steady-height stage for automatic testimonials. */
-.testimonial-controls{display:grid;grid-template-columns:auto 1fr;gap:14px 22px;width:fit-content;max-width:100%}
-.testimonial-rotation{grid-column:1 / -1;justify-self:start;display:inline-flex;align-items:center;min-height:44px;padding:10px 16px;border:1px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:13px}
-.testimonial-rotation:hover{background:var(--blush)}
-.testimonial-rotation[hidden]{display:none}
+/* A steady-height stage for automatic testimonials. */
 .testimonial-slides{display:grid}
 .testimonial-slide{grid-area:1 / 1}
 .testimonial-slide[hidden]{display:block;visibility:hidden;pointer-events:none}
