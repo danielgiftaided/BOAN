@@ -31,6 +31,7 @@ export const testimonials = [
   },
   {
     name: "Nicola O'Connor",
+    role: 'Instructor',
     excerpt: `The ladies I teach bring so much joy`,
     colour: 'green',
     paragraphs: [

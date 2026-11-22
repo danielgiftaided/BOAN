@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { testimonials } from '../src/content/testimonials.js';
-const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programs', 'our-programs.html'], ['Join our community', 'join-community.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
+const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programmes', 'our-programs.html'], ['Join our community', 'join-community.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
 const files = [...links.map(([, file]) => file), 'support-our-work.html', 'privacy-policy.html'];
 
 test('header links open distinct, reloadable pages with current-page state', async ({ page }) => {
@@ -297,7 +297,7 @@ test('homepage shows short verbatim testimonials in brand-coloured cards with ac
   await next.click();
   await expect(fourth).toBeVisible();
   await expect(fourth.locator('blockquote')).toHaveText('The ladies I teach bring so much joy');
-  await expect(fourth.locator('figcaption')).toHaveText("Nicola O'Connor");
+  await expect(fourth.locator('figcaption')).toHaveText("Nicola O'Connor (Instructor)");
   await expect(fourth).toHaveCSS('background-color', 'rgb(119, 210, 0)');
   await expect(page.locator('.testimonial-status')).toHaveText("4 of 4 — Nicola O'Connor");
   await next.click();
