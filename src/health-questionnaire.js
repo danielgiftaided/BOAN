@@ -180,7 +180,5 @@ if (form) {
       render({ moveFocus: true });
     }
   });
-  document.querySelector('#hq-references').innerHTML = paragraphs([...source.sourceNotices, ...source.references]);
-  if (window.BOAN_OFFLINE_PREVIEW) document.querySelector('.hq-source-pdf').hidden = true;
   render();
 }
