@@ -54,7 +54,7 @@ test('supplied homepage and programme artwork loads completely without cropping 
   }
 });
 
-test('community page retains supplied joining information and non-linked interest buttons', async ({ page }) => {
+test('community page retains joining information and links only the first interest control to the questionnaire', async ({ page }) => {
   await page.goto('/join-community.html');
   await expect(page.getByRole('heading', { level: 1, name: 'Your wellbeing starts here.', exact: true })).toBeVisible();
   await expect(page.locator('.community-intro-copy')).toContainText('Perhaps you want to feel stronger, try something new or simply have time for yourself.');
@@ -65,12 +65,13 @@ test('community page retains supplied joining information and non-linked interes
   await expect(page.locator('.community-steps li')).toHaveCount(3);
   await expect(page.locator('.community-first-step')).toContainText('Registering your interest does not guarantee a place or funding');
   const interest = page.getByRole('button', { name: 'Register Your Interest', exact: true });
-  await expect(interest).toHaveCount(2);
+  await expect(interest).toHaveCount(1);
   for (const button of await interest.all()) {
     await expect(button).toBeDisabled();
     await expect(button).toHaveAttribute('type', 'button');
   }
-  await expect(page.locator('a').filter({ hasText: 'Register Your Interest' })).toHaveCount(0);
+  await expect(page.locator('.community-intro').getByRole('link', { name: 'Register Your Interest', exact: true })).toHaveAttribute('href', 'health-questionnaire.html');
+  await expect(page.locator('.community-first-step').getByRole('button', { name: 'Register Your Interest', exact: true })).toBeDisabled();
   await expect(page.locator('form')).toHaveCount(0);
   await expect(page.locator('.community-faq details')).toHaveCount(6);
   await page.locator('.community-faq summary').filter({ hasText: 'Will my financial circumstances stay private?' }).click();
