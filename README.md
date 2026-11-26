@@ -13,7 +13,7 @@ npm run dev -- --port 3000
 
 ## Pages and editing
 
-The public website has eight dedicated HTML pages:
+The public website has nine dedicated HTML pages:
 
 - `index.html` — empowerment hero, testimonials, mission, programmes, community invitation, support feature and FAQ.
 - `about-us.html` — organisation story, vision and mission.
@@ -23,14 +23,15 @@ The public website has eight dedicated HTML pages:
 - `contact-us.html` — enquiry form, giving link and a direct link to `hello@boan.uk`.
 - `support-our-work.html` — single/monthly giving preview and donation impact summaries.
 - `privacy-policy.html` — the supplied privacy policy, reached through the bottom footer link on every page.
+- `health-questionnaire.html` — branded registration and PAR-Q+ branching preview linked from the first Register Your Interest button.
 
-Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, community copy in `src/pages/join-community.html`, privacy policy in `src/pages/privacy-policy.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the eight root HTML files, including before development and production builds. Keep these generated HTML files committed.
+Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, community copy in `src/pages/join-community.html`, privacy policy in `src/pages/privacy-policy.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the nine root HTML files, including before development and production builds. Keep these generated HTML files committed.
 
 `public/favicon.svg` embeds the original logo silhouette and renders it in the same green and pink as the header, with a light background so it stays legible on dark browser tabs. The icon is linked on every page and included inline in the offline previews.
 
 ## Community page and programme image links
 
-“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, two disabled **Register Your Interest** buttons with no destination or submission handler, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. No interest-registration form or data collection has been added. The Privacy Policy is available through the shared footer.
+“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, a first **Register Your Interest** link to the health questionnaire preview and a second disabled **Register Your Interest** button, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. The questionnaire is an interactive preview; response collection remains off until website storage is selected. The Privacy Policy is available through the shared footer.
 
 The policy retains all 15 sections of BOAN’s supplied wording, with semantic headings, lists and email/website links. As requested, square-bracketed editorial notes and placeholders have been removed. The unfinished correspondence-address line is omitted and **Last updated** is **21 November 2026**. The policy appears in the footer only, with no additional header tab.
 
@@ -70,6 +71,16 @@ The email recipient is a **Netlify dashboard setting**, not an HTML attribute. T
 
 Local Vite servers do not run Netlify Forms. Automated tests use intercepted endpoints and do not send real messages. Development and downloadable offline previews explicitly refuse to send; visitors can use the direct email link. Review current Netlify Forms usage/plan limits in the project dashboard.
 
+## Registration and health questionnaire preview
+
+Only the first **Register Your Interest** control on Join our community opens `health-questionnaire.html`; the second remains disabled. This custom BOAN website form uses pink, green and navy styling with Back/Next navigation, validation, progress and an answer review. It is not a Microsoft-hosted form.
+
+The seven general health answers are completed before routing. All NO skips the medical follow-ups. Any YES opens ten condition screens; each condition's YES reveals its lettered questions, and NO skips them. Changing an answer removes inapplicable child answers; changing the general route removes all medical follow-up answers. The relevant original recommendations and declaration are shown, and a parent/guardian/care-provider typed acknowledgement is conditional.
+
+Clinical wording is in `src/content/health-questionnaire.js`, transcribed from the supplied PAR-Q+ (© 2025 PAR-Q+ Collaboration, source date 01-11-2024): seven general questions, ten condition screens and 31 lettered follow-ups. Registration contact/interests fields and the typed preview acknowledgements are additional administrative fields. State and validation are in `src/health-questionnaire-state.js`; `src/health-questionnaire.js` renders the flow. The original blank PDF remains available under `public/downloads/`.
+
+**Preview only:** use sample details. There is no submission endpoint, Netlify health form, email notification, local/session storage, analytics payload or server persistence. Finishing clears the sample answers and explicitly confirms that nothing was sent. Website storage is to be chosen before enabling real collection, and signing arrangements must be confirmed before launch. The page has `noindex,nofollow` and the offline mockup also supports its branching.
+
 ## Giving preview
 
 The donation page and all existing links remain available, including the header button, footer link, homepage and Get Involved support features, contact-page giving link and homepage FAQ. The page is included in production and offline exports; there are no donation-page redirects.
@@ -88,7 +99,7 @@ npm run preview:standalone
 
 Production output is in `dist/`. Relative asset URLs also support deployments at a subpath.
 
-The standalone command produces eight individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, retain the giving preview, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
+The standalone command produces nine individually navigable files in `docs/preview/` and a single-file mockup in `docs/boan-interactive-preview.html`. Fonts, logos, favicon and JavaScript are embedded. Both formats use `noindex,nofollow`, retain the giving preview, and display an honest non-sending contact-form notice when submitted. The single-file iframe preserves navigation, query parameters, programme anchors and browser Back. `BOAN_PREVIEW_SEARCH`, `BOAN_PREVIEW_HASH` and `BOAN_OFFLINE_PREVIEW` supply the simulated location and prevent live submissions.
 
 The separate `gh-pages` branch contains a design-preview package with `BOAN-interactive-mockup.html`. Source PRs do not automatically update that branch. Production Netlify deployments should use `dist`, not the offline mockup.
 
@@ -105,4 +116,4 @@ npm run test:e2e
 
 Playwright uses `/usr/bin/chromium` when present. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for another browser, or install the matching Playwright Chromium browser in your development environment.
 
-The suite checks eight-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, monthly/single/custom donation choices, impact wording and review, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.
+The suite checks nine-page navigation, programme/enquiry pathways, mobile menus, testimonial controls, responsive layouts from 320 to 1440px, local links, offline preview navigation and non-sending forms, original-logo favicon rendering, monthly/single/custom donation choices, impact wording and review, static Netlify form detection markup, native no-JavaScript POSTs, and mocked contact submission success/failure/retry/duplicate prevention. Live Netlify form detection, notification settings and mailbox delivery require the deployment checks above.

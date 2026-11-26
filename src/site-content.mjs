@@ -83,6 +83,7 @@ const support = `<section class="giving-hero section">${breadcrumb('Support Our 
 
 const community = readFileSync(new URL('./pages/join-community.html', import.meta.url), 'utf8');
 const privacyPolicy = readFileSync(new URL('./pages/privacy-policy.html', import.meta.url), 'utf8');
+const healthQuestionnaire = readFileSync(new URL('./pages/health-questionnaire.html', import.meta.url), 'utf8');
 
 export const pages = [
   {file:'index.html', title:'Feel supported. Grow stronger. Thrive together.', description:'A women-only community for movement, wellbeing and meaningful connection. Explore BOAN, get involved or support another woman’s access to fitness.', content:home},
@@ -93,12 +94,13 @@ export const pages = [
   {file:'contact-us.html', title:'Contact Us', description:'Start a conversation with BOAN about programmes, participation, volunteering, partnerships or supporting our work.', content:contact},
   {file:'support-our-work.html', title:'Support Our Work', description:'Explore single and monthly donations to BOAN. For £35 a month, support a woman to attend fitness classes for a month.', content:support},
   {file:'privacy-policy.html', title:'Privacy Policy', description:'How Builders Of A Nation CIC collects, uses, stores and shares personal information, and your privacy rights.', content:privacyPolicy},
+  {file:'health-questionnaire.html', title:'Register your interest — questionnaire preview', description:'Try BOAN’s branded registration and PAR-Q+ questionnaire with answer-based follow-up questions.', content:healthQuestionnaire, noindex:true},
 ];
 
 export function renderPage(page) {
   const nav = navigation.map(([url,text])=>`<a href="${url}"${page.file===url?' aria-current="page"':''}>${text}</a>`).join('');
   return `<!doctype html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#ff66c4"/><meta name="description" content="${page.description}"/><title>BOAN — ${page.title}</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><link rel="stylesheet" href="/src/style.css"/></head><body data-page="${page.file}">
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#ff66c4"/><meta name="description" content="${page.description}"/>${page.noindex ? '<meta name="robots" content="noindex,nofollow"/>' : ''}<title>BOAN — ${page.title}</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><link rel="stylesheet" href="/src/style.css"/></head><body data-page="${page.file}">
 <a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html" aria-label="BOAN home">${brand}</a><nav id="main-nav" aria-label="Main navigation">${nav}</nav><div class="header-actions">${link('support-our-work.html','Support Our Work','button compact support-link').replace('<a ', page.file === 'support-our-work.html' ? '<a aria-current="page" ' : '<a ')}</div><button class="menu-toggle" aria-label="Open menu" aria-controls="main-nav" aria-expanded="false"><span></span><span></span><span></span></button></header>
 <main id="main" tabindex="-1">${page.content}</main><footer><div class="footer-top"><a class="brand" href="index.html" aria-label="Back to BOAN home">${brand}</a><p>Stronger women.<br>Stronger communities.<br><em>A future we build together.</em></p><div class="footer-links">${navigation.map(([url,text])=>`<a href="${url}">${text}</a>`).join('')}<a href="support-our-work.html">Support Our Work ${arrow}</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> Builders Of A Nation</span><a class="privacy-link" href="privacy-policy.html"${page.file === 'privacy-policy.html' ? ' aria-current="page"' : ''}>Privacy Policy</a><span>A women-only community interest company.</span></div></footer><script type="module" src="/src/main.js"></script></body></html>`;
 }

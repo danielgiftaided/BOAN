@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { testimonials } from '../src/content/testimonials.js';
 const links = [['Home', 'index.html'], ['About Us', 'about-us.html'], ['Our Programmes', 'our-programs.html'], ['Join our community', 'join-community.html'], ['Get Involved', 'get-involved.html'], ['Contact Us', 'contact-us.html']];
-const files = [...links.map(([, file]) => file), 'support-our-work.html', 'privacy-policy.html'];
+const files = [...links.map(([, file]) => file), 'support-our-work.html', 'privacy-policy.html', 'health-questionnaire.html'];
 
 test('header links open distinct, reloadable pages with current-page state', async ({ page }) => {
   await page.goto('/');
@@ -138,6 +138,7 @@ test('all pages fit narrow and wide screens, have no page errors and no broken l
 });
 
 test('downloadable mockup navigates all pages and donations offline without sending contact messages', async ({ page, context }) => {
+  test.setTimeout(60000); // Nine embedded pages include the supplied full-resolution artwork.
   const html = await readFile(resolve('docs/boan-interactive-preview.html'), 'utf8');
   const assetRequests = [];
   page.on('request', request => { if (request.resourceType() !== 'document' && /^https?:/.test(request.url())) assetRequests.push(request.url()); });
@@ -153,6 +154,13 @@ test('downloadable mockup navigates all pages and donations offline without send
     await site.locator('.site-header nav').getByRole('link', { name: label, exact: true }).click();
     await expect(site.locator('body')).toHaveAttribute('data-page', file);
   }
+  await site.locator('#main-nav').getByRole('link', { name: 'Join our community', exact: true }).click();
+  await site.locator('.community-intro').getByRole('link', { name: 'Register Your Interest', exact: true }).click();
+  await expect(site.locator('body')).toHaveAttribute('data-page', 'health-questionnaire.html');
+  await site.locator('#hq-name').fill('Offline Preview');
+  await site.locator('#hq-email').fill('offline@example.com');
+  await site.getByRole('button', { name: 'Next', exact: true }).click();
+  await expect(site.getByRole('heading', { name: 'Your general health', exact: true })).toBeVisible();
   await site.locator('footer').getByRole('link', { name: 'Privacy Policy', exact: true }).click();
   await expect(site.locator('body')).toHaveAttribute('data-page', 'privacy-policy.html');
   await expect(site.getByRole('heading', { level: 1, name: 'Privacy Policy', exact: true })).toBeVisible();

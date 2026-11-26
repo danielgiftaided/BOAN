@@ -1,0 +1,14 @@
+/downloads/*
+  X-Robots-Tag: noindex, nofollow
+
+/downloads/boan-health-questionnaire-fillable.pdf
+  Content-Type: application/pdf
+  Content-Disposition: attachment; filename="BOAN-Health-Questionnaire-Fillable.pdf"
+
+/downloads/boan-health-questionnaire-microsoft-forms.docx
+  Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  Content-Disposition: attachment; filename="BOAN-Health-Questionnaire-Microsoft-Forms.docx"
+
+/downloads/boan-microsoft-forms-setup-guide.pdf
+  Content-Type: application/pdf
+  Content-Disposition: attachment; filename="BOAN-Microsoft-Forms-Setup-Guide.pdf"

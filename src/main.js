@@ -1,4 +1,5 @@
 import './contact-form.js';
+import './health-questionnaire.js';
 import { donationPresets, getMonthlyImpact } from './content/donation-options.js';
 import '@fontsource/dm-sans/400.css';
 import '@fontsource/dm-sans/500.css';
