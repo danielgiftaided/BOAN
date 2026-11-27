@@ -1,5 +1,6 @@
 import { healthQuestionnaire as source } from './content/health-questionnaire.js';
-import { createQuestionnaireState, needsFollowups, questionnaireSteps, clearInapplicableAnswers, guidanceFor, currentClinicalQuestions, validateQuestionnaireStep } from './health-questionnaire-state.js';
+import { HEALTH_CONSENT_TEXT, createQuestionnaireState, needsFollowups, questionnaireSteps, clearInapplicableAnswers, guidanceFor, currentClinicalQuestions, validateQuestionnaireStep } from './health-questionnaire-state.js';
+import { buildHealthSubmission } from './health-questionnaire-submission.js';
 
 const form = document.querySelector('#health-questionnaire-form');
 if (form) {
@@ -12,6 +13,9 @@ if (form) {
   let state = createQuestionnaireState();
   let errors = {};
   let finished = false;
+  let sending = false;
+  const result = document.querySelector('#hq-submission-result');
+  const canSubmit = !window.BOAN_OFFLINE_PREVIEW && !import.meta.env.DEV && location.protocol === 'https:' && ['boan.uk', 'www.boan.uk', 'gregarious-praline-4653bf.netlify.app'].includes(location.hostname);
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const id = key => `hq-${key}`;
   const paragraphs = values => values.map(value => `<p>${escape(value)}</p>`).join('');
@@ -44,7 +48,7 @@ if (form) {
   }
 
   function renderDetails() {
-    return `<h2 id="hq-step-title" tabindex="-1">Let’s start with you.</h2><p class="hq-step-description">Tell us what interests you. Use sample details while you explore this preview.</p><div class="hq-field-grid">${textField('name', 'Your name', state.details.name, { required: true })}${textField('email', 'Email address', state.details.email, { type: 'email', required: true })}</div><fieldset class="hq-interests"><legend>What would you like to explore? <span class="hq-required">(optional)</span></legend><p class="hq-hint">Choose as many as you like, or leave this for now.</p><div class="hq-interest-options">${['Movement', 'Workshops', 'Creative', 'Retreats'].map(value => `<label class="hq-choice"><input type="checkbox" name="interests" value="${value}" data-scope="details"${state.details.interests.includes(value) ? ' checked' : ''}/><span>${value}</span></label>`).join('')}</div></fieldset>${textField('support', 'Anything that would help you take part? (optional)', state.details.support, { multiline: true })}`;
+    return `<h2 id="hq-step-title" tabindex="-1">Let’s start with you.</h2><p class="hq-step-description">Tell us what interests you and what would help you take part.</p><div class="hq-field-grid">${textField('name', 'Your name', state.details.name, { required: true })}${textField('email', 'Email address', state.details.email, { type: 'email', required: true })}</div><fieldset class="hq-interests"><legend>What would you like to explore? <span class="hq-required">(optional)</span></legend><p class="hq-hint">Choose as many as you like, or leave this for now.</p><div class="hq-interest-options">${['Movement', 'Workshops', 'Creative', 'Retreats'].map(value => `<label class="hq-choice"><input type="checkbox" name="interests" value="${value}" data-scope="details"${state.details.interests.includes(value) ? ' checked' : ''}/><span>${value}</span></label>`).join('')}</div></fieldset>${textField('support', 'Anything that would help you take part? (optional)', state.details.support, { multiline: true })}`;
   }
 
   function renderGeneral() {
@@ -59,7 +63,7 @@ if (form) {
 
   function renderDeclaration() {
     const declaration = needsFollowups(state) ? source.declarations.followup : source.declarations.general;
-    return `<h2 id="hq-step-title" tabindex="-1">Participant declaration</h2>${guidance()}<div class="hq-declaration-copy"><h3>Please read before continuing</h3><p>${escape(declaration)}</p><p>${escape(source.guardianNote)}</p></div><div class="hq-field-grid">${textField('registeredName', 'Name', state.details.name, { readonly: true })}${textField('date', 'Date', state.declaration.date, { scope: 'declaration', type: 'date', required: true })}</div>${textField('signature', 'Signature (typed name for this preview)', state.declaration.signature, { scope: 'declaration', required: true, hint: 'Type your name as an acknowledgement. Signing arrangements will be confirmed before this form collects real responses.' })}${textField('witness', 'Witness (optional)', state.declaration.witness, { scope: 'declaration' })}${checkedField('needsGuardian', 'A parent, guardian or care provider needs to sign too.', state.declaration.needsGuardian)}${state.declaration.needsGuardian ? textField('guardianSignature', 'Parent, guardian or care provider signature (typed name)', state.declaration.guardianSignature, { scope: 'declaration', required: true }) : ''}${checkedField('acknowledged', 'I have read and understood the participant declaration above.', state.declaration.acknowledged)}`;
+    return `<h2 id="hq-step-title" tabindex="-1">Participant declaration</h2>${guidance()}<div class="hq-declaration-copy"><h3>Please read before continuing</h3><p>${escape(declaration)}</p><p>${escape(source.guardianNote)}</p></div><div class="hq-field-grid">${textField('registeredName', 'Name', state.details.name, { readonly: true })}${textField('date', 'Date', state.declaration.date, { scope: 'declaration', type: 'date', required: true })}</div>${textField('signature', 'Acknowledgement (type your full name)', state.declaration.signature, { scope: 'declaration', required: true, hint: 'Typing your full name records your acknowledgement of the participant declaration above.' })}${textField('witness', 'Witness (optional)', state.declaration.witness, { scope: 'declaration' })}${checkedField('needsGuardian', 'A parent, guardian or care provider needs to sign too.', state.declaration.needsGuardian)}${state.declaration.needsGuardian ? textField('guardianSignature', 'Parent, guardian or care provider acknowledgement (typed name)', state.declaration.guardianSignature, { scope: 'declaration', required: true }) : ''}${checkedField('acknowledged', 'I have read and understood the participant declaration above.', state.declaration.acknowledged)}`;
   }
 
   const displayAnswer = value => Array.isArray(value) ? value.join(', ') || 'Not provided' : value === 'YES' ? 'Yes' : value === 'NO' ? 'No' : String(value || 'Not provided');
@@ -69,15 +73,15 @@ if (form) {
   }
 
   function renderReview() {
-    return `<h2 id="hq-step-title" tabindex="-1">Review your answers</h2><p class="hq-step-description">You can go Back to make changes. Finishing this preview will clear the sample answers without sending them to BOAN.</p><h3>Your details</h3><dl class="hq-review">${reviewRow('Name', state.details.name)}${reviewRow('Email address', state.details.email)}${reviewRow('Programme interests', state.details.interests)}${reviewRow('What would help you take part', state.details.support)}</dl><details class="hq-review-group" open><summary>General health answers</summary><dl class="hq-review">${clinicalReview(source.general)}</dl></details>${needsFollowups(state) ? source.conditions.map(condition => `<details class="hq-review-group"><summary>${escape(condition.title)}</summary><dl class="hq-review">${reviewRow(condition.gate.text, state.answers[condition.id])}${state.answers[condition.id] === 'YES' ? clinicalReview(condition.questions) + (condition.detail ? reviewRow(condition.detail.text, state.answers[condition.detail.id]) : '') : ''}</dl></details>`).join('') : ''}<h3>Declaration</h3><dl class="hq-review">${reviewRow('Name', state.details.name)}${reviewRow('Date', state.declaration.date)}${reviewRow('Typed signature', state.declaration.signature)}${reviewRow('Witness', state.declaration.witness)}${state.declaration.needsGuardian ? reviewRow('Parent, guardian or care provider typed signature', state.declaration.guardianSignature) : ''}${reviewRow('Declaration read and understood', state.declaration.acknowledged ? 'YES' : 'NO')}</dl>`;
+    return `<h2 id="hq-step-title" tabindex="-1">Review your answers</h2><p class="hq-step-description">Check your answers before sending them to BOAN. You can go Back to make changes. Registering your interest does not guarantee a place or funding.</p><h3>Your details</h3><dl class="hq-review">${reviewRow('Name', state.details.name)}${reviewRow('Email address', state.details.email)}${reviewRow('Programme interests', state.details.interests)}${reviewRow('What would help you take part', state.details.support)}</dl><details class="hq-review-group" open><summary>General health answers</summary><dl class="hq-review">${clinicalReview(source.general)}</dl></details>${needsFollowups(state) ? source.conditions.map(condition => `<details class="hq-review-group"><summary>${escape(condition.title)}</summary><dl class="hq-review">${reviewRow(condition.gate.text, state.answers[condition.id])}${state.answers[condition.id] === 'YES' ? clinicalReview(condition.questions) + (condition.detail ? reviewRow(condition.detail.text, state.answers[condition.detail.id]) : '') : ''}</dl></details>`).join('') : ''}<h3>Declaration</h3><dl class="hq-review">${reviewRow('Name', state.details.name)}${reviewRow('Date', state.declaration.date)}${reviewRow('Typed acknowledgement', state.declaration.signature)}${reviewRow('Witness', state.declaration.witness)}${state.declaration.needsGuardian ? reviewRow('Parent, guardian or care provider typed acknowledgement', state.declaration.guardianSignature) : ''}${reviewRow('Declaration read and understood', state.declaration.acknowledged ? 'YES' : 'NO')}</dl><h3>Your health information</h3><p>Please read how we handle your information before consenting: <a class="hq-privacy-link" href="privacy-policy.html">Read our Privacy Policy</a>.</p>${checkedField('healthConsent', HEALTH_CONSENT_TEXT, state.declaration.healthConsent)}`;
   }
 
   function updateProgress() {
     if (finished) {
-      phases.innerHTML = '<li class="complete">Preview finished</li>';
+      phases.innerHTML = '<li class="complete">Questionnaire sent</li>';
       progress.max = 1;
       progress.value = 1;
-      progressLabel.textContent = 'Preview complete';
+      progressLabel.textContent = 'Thank you for taking the first step.';
       return;
     }
     const steps = questionnaireSteps(state);
@@ -96,14 +100,14 @@ if (form) {
     updateProgress();
     const summary = Object.keys(errors).length ? `<div id="hq-errors" class="hq-error-summary" tabindex="-1" role="alert"><h3>Please check your answers</h3><ul>${Object.entries(errors).map(([key, message]) => `<li><a href="#${id(key)}" data-error-link="${key}">${escape(message)}</a></li>`).join('')}</ul></div>` : '';
     if (finished) {
-      step.innerHTML = '<div class="hq-complete"><span class="hq-complete-mark" aria-hidden="true">✓</span><h2 id="hq-step-title" tabindex="-1">Preview complete</h2><p>Your sample answers have been cleared. No questionnaire has been sent to BOAN.</p><button class="button lime" type="button" data-hq-restart>Try another route</button><a class="hq-return" href="join-community.html">Back to Join our community</a></div>';
+      step.innerHTML = '<div class="hq-complete"><span class="hq-complete-mark" aria-hidden="true">✓</span><h2 id="hq-step-title" tabindex="-1">Thank you for taking the first step.</h2><p>Your questionnaire has been received. BOAN will review your answers and contact you about suitable opportunities. Registering your interest does not guarantee a place or funding.</p><a class="hq-return" href="join-community.html">Back to Join our community</a></div>';
     } else {
       const content = state.step === 'details' ? renderDetails() : state.step === 'general' ? renderGeneral() : state.step === 'declaration' ? renderDeclaration() : state.step === 'review' ? renderReview() : renderCondition();
       step.innerHTML = summary + content;
     }
     back.hidden = finished || state.step === 'details';
     next.hidden = finished;
-    next.textContent = state.step === 'review' ? 'Finish preview' : state.step === 'declaration' ? 'Review answers' : 'Next';
+    next.textContent = state.step === 'review' ? 'Send questionnaire' : state.step === 'declaration' ? 'Review answers' : 'Next';
     if (focusErrors) {
       document.querySelector('#hq-errors').focus();
     } else if (preserveFocus) {
@@ -120,7 +124,7 @@ if (form) {
     const key = control.name;
     let value = control.value;
     if (control.type === 'checkbox') {
-      value = key === 'needsGuardian' || key === 'acknowledged' ? control.checked : [...form.querySelectorAll('input[type="checkbox"]')].filter(input => input.name === key && input.checked).map(input => input.value);
+      value = ['needsGuardian', 'acknowledged', 'healthConsent'].includes(key) ? control.checked : [...form.querySelectorAll('input[type="checkbox"]')].filter(input => input.name === key && input.checked).map(input => input.value);
     }
     if (scope === 'details') {
       if (key === 'name' && value !== state.details.name) state.declaration.signature = '';
@@ -131,6 +135,9 @@ if (form) {
       state.answers[key] = value;
     }
     if (scope !== 'declaration') state.declaration.acknowledged = false;
+    if (key !== 'healthConsent') state.declaration.healthConsent = false;
+    result.textContent = '';
+    delete result.dataset.state;
     clearInapplicableAnswers(state);
   }
 
@@ -141,26 +148,77 @@ if (form) {
     const control = event.target;
     if (!control.matches('input[type="radio"],input[type="checkbox"]')) return;
     updateControl(control);
-    if (control.dataset.scope === 'answers' || control.name === 'needsGuardian') {
+    if (control.dataset.scope === 'answers' || control.name === 'needsGuardian' || control.name === 'healthConsent') {
       errors = {};
       render({ preserveFocus: { name: control.name, value: control.value } });
     }
   });
-  form.addEventListener('submit', event => {
+  function submissionMessage(message, status) {
+    result.textContent = message;
+    result.dataset.state = status;
+    if (status !== 'pending') result.focus();
+  }
+
+  async function sendQuestionnaire() {
+    if (!canSubmit) {
+      submissionMessage('This preview cannot send questionnaires. Please use the form on www.boan.uk. Your answers have not been sent or saved.', 'preview');
+      return;
+    }
+    // Recheck the whole active route before building the notification report.
+    for (const key of questionnaireSteps(state)) {
+      errors = validateQuestionnaireStep({ ...state, step: key });
+      if (Object.keys(errors).length) {
+        state.step = key;
+        return render({ focusErrors: true });
+      }
+    }
+    const body = buildHealthSubmission(state, form.elements['bot-field'].value);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    sending = true;
+    form.setAttribute('aria-busy', 'true');
+    for (const control of form.querySelectorAll('button,input,textarea')) control.disabled = true;
+    next.textContent = 'Sending…';
+    submissionMessage('Sending your questionnaire…', 'pending');
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString(),
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error('Questionnaire was not accepted');
+      state = createQuestionnaireState();
+      form.elements['bot-field'].value = '';
+      finished = true;
+      result.textContent = '';
+      delete result.dataset.state;
+      render({ moveFocus: true });
+    } catch {
+      submissionMessage('We couldn’t confirm your questionnaire was received. Your answers are still here; please try again. If the problem continues, contact hello@boan.uk for help.', 'error');
+    } finally {
+      clearTimeout(timeout);
+      sending = false;
+      form.removeAttribute('aria-busy');
+      for (const control of form.querySelectorAll('button,input,textarea')) control.disabled = false;
+      if (!finished) next.textContent = 'Send questionnaire';
+    }
+  }
+
+  form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (finished) return;
+    if (finished || sending) return;
     errors = validateQuestionnaireStep(state);
     if (Object.keys(errors).length) return render({ focusErrors: true });
-    if (state.step === 'review') {
-      state = createQuestionnaireState();
-      finished = true;
-    } else {
-      const steps = questionnaireSteps(state);
-      state.step = steps[steps.indexOf(state.step) + 1];
-    }
+    if (state.step === 'review') return sendQuestionnaire();
+    const steps = questionnaireSteps(state);
+    state.step = steps[steps.indexOf(state.step) + 1];
     render({ moveFocus: true });
   });
   back.addEventListener('click', () => {
+    if (sending) return;
+    result.textContent = '';
+    delete result.dataset.state;
     const steps = questionnaireSteps(state);
     state.step = steps[Math.max(0, steps.indexOf(state.step) - 1)];
     errors = {};
@@ -172,12 +230,6 @@ if (form) {
       event.preventDefault();
       const field = document.getElementById(id(errorLink.dataset.errorLink));
       (field?.matches('fieldset') ? field.querySelector('input,textarea') : field)?.focus();
-    }
-    if (event.target.closest('[data-hq-restart]')) {
-      state = createQuestionnaireState();
-      errors = {};
-      finished = false;
-      render({ moveFocus: true });
     }
   });
   render();

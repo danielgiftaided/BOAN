@@ -23,7 +23,7 @@ The public website has nine dedicated HTML pages:
 - `contact-us.html` — enquiry form, giving link and a direct link to `hello@boan.uk`.
 - `support-our-work.html` — single/monthly giving preview and donation impact summaries.
 - `privacy-policy.html` — the supplied privacy policy, reached through the bottom footer link on every page.
-- `health-questionnaire.html` — branded registration and PAR-Q+ branching preview linked from the first Register Your Interest button.
+- `health-questionnaire.html` — branded registration and PAR-Q+ branching questionnaire linked from the first Register Your Interest button.
 
 Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout and page content in `src/site-content.mjs`, the homepage hero in `src/pages/home-hero.html`, community copy in `src/pages/join-community.html`, privacy policy in `src/pages/privacy-policy.html`, styling in `src/style.css`, and interactions in `src/main.js` and `src/contact-form.js`. `npm run pages` generates the nine root HTML files, including before development and production builds. Keep these generated HTML files committed.
 
@@ -31,9 +31,9 @@ Edit BOAN’s approved wording in `src/content/approved-copy.mjs`, shared layout
 
 ## Community page and programme image links
 
-“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, a first **Register Your Interest** link to the health questionnaire preview and a second disabled **Register Your Interest** button, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. The questionnaire is an interactive preview; response collection remains off until website storage is selected. The Privacy Policy is available through the shared footer.
+“Join our community” appears in the shared header and footer navigation. The page contains BOAN’s supplied copy, a first **Register Your Interest** link to the health questionnaire and a second disabled **Register Your Interest** button, six expandable FAQs, and **Talk to Us** linking to `contact-us.html`. The questionnaire submits through Netlify Forms on the production website; email delivery requires the notification setting described below. The Privacy Policy is available through the shared footer.
 
-The policy retains all 15 sections of BOAN’s supplied wording, with semantic headings, lists and email/website links. As requested, square-bracketed editorial notes and placeholders have been removed. The unfinished correspondence-address line is omitted and **Last updated** is **21 November 2026**. The policy appears in the footer only, with no additional header tab.
+The policy retains all 15 sections of BOAN’s supplied wording, with semantic headings, lists and email/website links. As requested, square-bracketed editorial notes and placeholders have been removed. The unfinished correspondence-address line is omitted and **Last updated** is **26 November 2026**. The questionnaire disclosure identifies Netlify Forms storage, the Microsoft 365 mailbox and explicit consent. The policy appears in the footer only, with no additional header tab.
 
 The homepage programme artwork is the link to the corresponding `our-programs.html#movement`, `#workshops`, `#creative` or `#retreats` section. Each image link has a descriptive accessible name, with no separate “Explore…” text link under the card. The general **See Our Programmes** link remains. The main navigation switches to the menu at 1200px so the extra tab fits without crowding.
 
@@ -71,15 +71,26 @@ The email recipient is a **Netlify dashboard setting**, not an HTML attribute. T
 
 Local Vite servers do not run Netlify Forms. Automated tests use intercepted endpoints and do not send real messages. Development and downloadable offline previews explicitly refuse to send; visitors can use the direct email link. Review current Netlify Forms usage/plan limits in the project dashboard.
 
-## Registration and health questionnaire preview
+## Registration and health questionnaire submissions
 
 Only the first **Register Your Interest** control on Join our community opens `health-questionnaire.html`; the second remains disabled. This custom BOAN website form uses pink, green and navy styling with Back/Next navigation, validation, progress and an answer review. It is not a Microsoft-hosted form.
 
 The seven general health answers are completed before routing. All NO skips the medical follow-ups. Any YES opens ten condition screens; each condition's YES reveals its lettered questions, and NO skips them. Changing an answer removes inapplicable child answers; changing the general route removes all medical follow-up answers. The relevant original recommendations and declaration are shown, and a parent/guardian/care-provider typed acknowledgement is conditional.
 
-Clinical wording is in `src/content/health-questionnaire.js`, transcribed from the supplied PAR-Q+ (© 2025 PAR-Q+ Collaboration, source date 01-11-2024): seven general questions, ten condition screens and 31 lettered follow-ups. Registration contact/interests fields and the typed preview acknowledgements are additional administrative fields. State and validation are in `src/health-questionnaire-state.js`; `src/health-questionnaire.js` renders the flow. The original blank PDF remains available under `public/downloads/`.
+Clinical wording is in `src/content/health-questionnaire.js`, transcribed from the supplied PAR-Q+ (© 2025 PAR-Q+ Collaboration, source date 01-11-2024): seven general questions, ten condition screens and 31 lettered follow-ups. Registration contact/interests fields and the typed acknowledgements are additional administrative fields. State and validation are in `src/health-questionnaire-state.js`; `src/health-questionnaire.js` renders the flow. The original blank PDF remains available under `public/downloads/`.
 
-**Preview only:** use sample details. There is no submission endpoint, Netlify health form, email notification, local/session storage, analytics payload or server persistence. Finishing clears the sample answers and explicitly confirms that nothing was sent. Website storage is to be chosen before enabling real collection, and signing arrangements must be confirmed before launch. The page has `noindex,nofollow` and the offline mockup also supports its branching.
+The Interactive preview box is removed. On the production hosts (`boan.uk`, `www.boan.uk`, and `gregarious-praline-4653bf.netlify.app`), **Send questionnaire** submits an HTTPS, URL-encoded POST to Netlify Forms. A hidden build-time schema detects the separate **`boan-health-questionnaire`** form, with a honeypot, name, email, readable `questionnaire-results` report and `health-consent`. The report contains only the applicable clinical answers, with full question wording, guidance shown, the declaration text, typed acknowledgements and the explicit consent wording. Unfinished answers stay in memory, with no local/session storage or URL payloads. The original typed name is an acknowledgement; there is no identity-verified e-signature service.
+
+The final review requires a separate, unchecked health-information consent box explaining the purpose, Netlify storage, email destination and withdrawal route. Changes to details or answers clear that consent. Submission is single-flight, has a 20-second timeout, retains answers after errors for retry, and clears the form only after Netlify accepts the response. The confirmation acknowledges receipt, not mailbox delivery. Development, local/offline mockups, branch deploys and Deploy Previews refuse to send; use sample details to review them. Tests intercept every submission and never send email.
+
+**Activate health questionnaire emails after merging and deployment:**
+
+1. In Netlify **Forms → Form detection**, ensure detection is enabled, then deploy and confirm **boan-health-questionnaire** appears in Active forms.
+2. Open **Forms → Submission notifications → Add notification → Email notification** (or the equivalent project Notifications section). Choose **boan-health-questionnaire** and recipient **hello@boan.uk**. A notification scoped to `boan-contact` does not include this new form.
+3. Confirm the subscription using the verification email sent to **hello@boan.uk**. Until “Waiting for hello@boan.uk to confirm” disappears, notification delivery is not enabled. Check junk/quarantine or recreate the notification if needed.
+4. On the production website, submit a questionnaire using clearly labelled **sample** details. Check both its verified Netlify submission and the resulting email. A successful website confirmation verifies acceptance by Netlify, not delivery to the mailbox.
+
+This repository cannot create or verify account-level email notifications without authenticated Netlify access. Netlify Forms stores completed answers and notifications include health information: limit Netlify and mailbox access to authorised BOAN staff, and delete records when no longer needed under BOAN’s retention policy. Both form records and mailbox copies need managing. No changes to Microsoft Exchange or email DNS are required if **hello@boan.uk** already receives ordinary mail.
 
 ## Giving preview
 

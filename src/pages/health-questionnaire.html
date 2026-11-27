@@ -2,7 +2,6 @@
   <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><a href="join-community.html">Join our community</a><span aria-hidden="true">/</span><span aria-current="page">Questionnaire</span></nav>
   <h1 id="hq-title">Your first step.<br><em>A little about you.</em></h1>
   <p>Register your interest in BOAN’s community and work through the supplied PAR-Q+ health questionnaire. Your answers guide which follow-up questions you see.</p>
-  <div class="hq-preview-notice"><strong>Interactive preview</strong><span>Use sample details to try the form. Responses are not sent to BOAN or saved.</span></div>
 </section>
 <section class="hq-workspace section" aria-label="Registration and health questionnaire">
   <aside class="hq-sidebar" aria-label="Your progress">
@@ -15,8 +14,19 @@
     <div class="hq-progress"><span id="hq-progress-label">Your details</span><progress id="hq-progress" max="4" value="1" aria-label="Questionnaire progress"></progress></div>
     <noscript><p>This interactive questionnaire needs JavaScript. You can <a href="downloads/boan-health-questionnaire-fillable.pdf">download the blank PDF questionnaire</a> instead.</p></noscript>
     <form id="health-questionnaire-form" novalidate autocomplete="off">
+      <p hidden><label>Leave this field empty<input name="bot-field" tabindex="-1" autocomplete="off"/></label></p>
       <div id="hq-step"></div>
       <div class="hq-actions"><button class="button outline" type="button" id="hq-back" hidden>Back</button><button class="button lime" type="submit" id="hq-next" hidden>Next</button></div>
+      <p id="hq-submission-result" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
     </form>
   </div>
 </section>
+<!-- Netlify's build-time detector needs the fields that the JavaScript wizard submits. -->
+<form name="boan-health-questionnaire" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="boan-health-questionnaire"/>
+  <input name="bot-field"/>
+  <input name="name"/>
+  <input type="email" name="email"/>
+  <textarea name="questionnaire-results"></textarea>
+  <input name="health-consent"/>
+</form>
