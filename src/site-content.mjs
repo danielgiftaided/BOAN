@@ -94,7 +94,7 @@ export const pages = [
   {file:'contact-us.html', title:'Contact Us', description:'Start a conversation with BOAN about programmes, participation, volunteering, partnerships or supporting our work.', content:contact},
   {file:'support-our-work.html', title:'Support Our Work', description:'Explore single and monthly donations to BOAN. For £35 a month, support a woman to attend fitness classes for a month.', content:support},
   {file:'privacy-policy.html', title:'Privacy Policy', description:'How Builders Of A Nation CIC collects, uses, stores and shares personal information, and your privacy rights.', content:privacyPolicy},
-  {file:'health-questionnaire.html', title:'Register your interest — questionnaire preview', description:'Try BOAN’s branded registration and PAR-Q+ questionnaire with answer-based follow-up questions.', content:healthQuestionnaire, noindex:true},
+  {file:'health-questionnaire.html', title:'Register your interest — health questionnaire', description:'Register your interest in BOAN and complete the PAR-Q+ health questionnaire with answer-based follow-up questions.', content:healthQuestionnaire, noindex:true},
 ];
 
 export function renderPage(page) {

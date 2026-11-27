@@ -164,7 +164,7 @@ test('downloadable mockup navigates all pages and donations offline without send
   await site.locator('footer').getByRole('link', { name: 'Privacy Policy', exact: true }).click();
   await expect(site.locator('body')).toHaveAttribute('data-page', 'privacy-policy.html');
   await expect(site.getByRole('heading', { level: 1, name: 'Privacy Policy', exact: true })).toBeVisible();
-  await expect(site.locator('.policy-updated')).toHaveText('Last updated: 21 November 2026');
+  await expect(site.locator('.policy-updated')).toHaveText('Last updated: 26 November 2026');
   await expect(site.locator('.privacy-policy')).not.toContainText('[');
   await expect(site.getByRole('heading', { name: '15. Changes to this policy', exact: true })).toHaveCount(1);
   await site.locator('.site-header').getByRole('link', { name: 'Support Our Work', exact: true }).click();
